@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Los prototipos originales se sirven tal cual y traen bundles minificados.
+    // No son codigo nuestro y no tiene sentido lintearlos.
+    "public/prototipo/**",
+    // Scratch del CLI de Supabase.
+    "supabase/.temp/**",
   ]),
 ]);
 

@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# store temporal en disco (se reemplaza por Supabase)
+/.data
+
+# el ejemplo de env si se versiona
+!.env.example
+
+# scratch del CLI de Supabase
+/supabase/.temp

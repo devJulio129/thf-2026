@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>La Velaria · Recinto Ferial Tampico</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+<style>
+  html, body { margin: 0; height: 100%; background: #0a0a0a; }
+  #map { position: absolute; inset: 0; }
+  .leaflet-container { background: #0a0a0a; font-family: Inter, system-ui, sans-serif; }
+  .leaflet-tile-pane { filter: grayscale(1) brightness(.62) contrast(1.12); }
+  .thf-pin {
+    display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
+    background: #f45a0b; color: #000; font: 900 11px/1 Inter, system-ui, sans-serif;
+    letter-spacing: .04em; box-shadow: 0 0 0 6px rgba(244,90,11,.22), 0 8px 20px rgba(0,0,0,.5);
+  }
+  .leaflet-popup-content-wrapper { background: #111; color: #f5f3ee; border-radius: 4px; }
+  .leaflet-popup-tip { background: #111; }
+  .leaflet-popup-content { margin: 12px 14px; font-size: 12px; line-height: 1.5; }
+  .leaflet-popup-content b { letter-spacing: .06em; text-transform: uppercase; font-size: 11px; color: #f45a0b; }
+  .leaflet-control-attribution { background: rgba(0,0,0,.6) !important; color: rgba(255,255,255,.55) !important; }
+  .leaflet-control-attribution a { color: rgba(255,255,255,.75) !important; }
+  .leaflet-bar a { background: #111 !important; color: #f5f3ee !important; border-color: rgba(255,255,255,.15) !important; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+  // Coordenada del Recinto Ferial de Tampico (A. López Mateos s/n) según registro público de la locación.
+  var VELARIA = [22.2310654, -97.8516311];
+  var map = L.map('map', { center: VELARIA, zoom: 16, scrollWheelZoom: false });
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+  L.marker(VELARIA, {
+    icon: L.divIcon({ className: '', html: '<div class="thf-pin">THF</div>', iconSize: [34, 34], iconAnchor: [17, 17] })
+  }).addTo(map)
+    .bindPopup('<b>La Velaria</b><br />Recinto Ferial Tampico<br />A. López Mateos s/n<br />14 y 15 de noviembre de 2026')
+    .openPopup();
+  map.on('click', function () { map.scrollWheelZoom.enable(); });
+</script>
+</body>
+</html>

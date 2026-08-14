@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; -webkit-font-smoothing: antialiased; }
+::selection { background: #f45a0b; color: #000; }
+a { color: #f45a0b; text-decoration: none; }
+.thf-wordmark { font-family: 'Russo One','Inter',system-ui,sans-serif; font-style: italic; }
+</style>
+</helmet>
+
+<div style="font-family: 'Inter', system-ui, sans-serif; background: #080808; color: #f5f3ee; min-height: 100vh; display: flex; flex-direction: column;">
+  <header style="border-bottom: 1px solid rgba(255,255,255,.1);">
+    <div style="max-width: 780px; margin: 0 auto; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;">
+      <a href="./Tampico Hybrid Fest - Landing.dc.html" style="font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,.6); display: inline-flex; align-items: center; gap: 8px;">← Volver</a>
+      <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b;">Quiz · Categoría</div>
+      <div style="width: 64px;"></div>
+    </div>
+    <div style="height: 4px; background: rgba(255,255,255,.05);">
+      <div style="height: 100%; background: #f45a0b; transition: width .5s; width: {{ progress }}%;"></div>
+    </div>
+  </header>
+
+  <main style="flex: 1; display: flex; align-items: center; padding: 48px 20px;">
+    <div style="max-width: 780px; margin: 0 auto; width: 100%;">
+
+      <sc-if value="{{ isQuestion }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 24px;">Pregunta {{ questionNumber }} de {{ totalQuestions }}</div>
+          <h1 class="thf-wordmark" style="font-size: clamp(1.8rem,4vw,2.8rem); text-transform: uppercase; line-height: 1.05; margin: 0 0 40px;">{{ currentQuestion }}</h1>
+          <div style="display: grid; gap: 12px;">
+            <sc-for list="{{ currentOptions }}" as="opt" hint-placeholder-count="3">
+              <button type="button" onClick="{{ opt.onClick }}" style="text-align: left; border-radius: 16px; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.02); padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; color: inherit; font: inherit;" style-hover="border-color:rgba(244,90,11,.5);background:rgba(244,90,11,.05);">
+                <span style="font-size: 17px; color: rgba(255,255,255,.9);">{{ opt.label }}</span>
+                <span style="color: rgba(255,255,255,.3);">→</span>
+              </button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ canGoBack }}" hint-placeholder-val="{{ false }}">
+            <button type="button" onClick="{{ back }}" style="margin-top: 32px; background: none; border: none; color: rgba(255,255,255,.5); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">← Pregunta anterior</button>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="position: relative; overflow: hidden; border-radius: 24px; border: 1px solid rgba(244,90,11,.3); background: linear-gradient(135deg, rgba(244,90,11,.1), rgba(0,0,0,.4) 60%, #000); padding: 48px;">
+            <div style="position: absolute; top: -80px; right: -80px; width: 280px; height: 280px; border-radius: 50%; background: rgba(244,90,11,.2); filter: blur(60px);"></div>
+            <div style="position: relative;">
+              <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b; margin-bottom: 16px;">Tu categoría recomendada</div>
+              <div class="thf-wordmark" style="font-size: clamp(3rem,7vw,5rem); color: #f45a0b; text-transform: uppercase; line-height: 1; margin-bottom: 12px;">{{ resultName }}</div>
+              <p style="font-size: 14px; color: rgba(255,255,255,.6); margin: 0 0 24px;">{{ resultTag }}</p>
+              <p style="font-size: 17px; line-height: 1.7; color: rgba(255,255,255,.8); max-width: 60ch; margin: 0 0 24px;">{{ resultDesc }}</p>
+              <div style="border-radius: 16px; border: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.4); padding: 16px; display: flex; gap: 12px; max-width: 60ch;">
+                <span style="color: #f45a0b;">✦</span>
+                <p style="font-size: 14px; color: rgba(255,255,255,.7); margin: 0;">{{ resultRecommend }}</p>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px;">
+            <a href="{{ resultHref }}" style="flex: 1; min-width: 200px; text-align: center; border-radius: 999px; border: 1px solid rgba(244,90,11,.4); background: rgba(244,90,11,.05); color: #f45a0b; padding: 16px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Conocer la categoría →</a>
+            <a href="./Tampico Hybrid Fest - Login.dc.html" style="flex: 1; min-width: 200px; text-align: center; border-radius: 999px; background: #f45a0b; color: #000; padding: 16px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Crear cuenta →</a>
+            <button type="button" onClick="{{ reset }}" style="border-radius: 999px; border: 1px solid rgba(255,255,255,.2); background: transparent; color: #fff; padding: 16px 24px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;">↺ Repetir</button>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const QUESTIONS = [
+  { q: "¿Hace cuánto entrenas de forma constante?", options: [
+    { label: "Menos de 1 año", w: { CM: 3 } },
+    { label: "1 a 3 años", w: { CM: 2, OP: 1 } },
+    { label: "3 a 6 años", w: { OP: 3 } },
+    { label: "Más de 6 años", w: { OP: 3 } },
+  ]},
+  { q: "¿Cuántas veces entrenas por semana?", options: [
+    { label: "2 — 3", w: { CM: 3 } },
+    { label: "4 — 5", w: { CM: 1, OP: 2 } },
+    { label: "6+", w: { OP: 3 } },
+  ]},
+  { q: "¿Has competido antes en CrossFit, Hyrox o similar?", options: [
+    { label: "Nunca", w: { CM: 3 } },
+    { label: "1 o 2 veces", w: { CM: 1, OP: 2 } },
+    { label: "Varias competencias", w: { OP: 3 } },
+  ]},
+  { q: "Con cargas pesadas y ya cansado, ¿qué pasa?", options: [
+    { label: "Prefiero bajar el peso y mantener el ritmo", w: { CM: 4 } },
+    { label: "Aguanto, aunque me cueste la técnica", w: { CM: 2, OP: 2 } },
+    { label: "Ahí es donde le saco ventaja a los demás", w: { OP: 4 } },
+  ]},
+  { q: "¿Qué buscas en el evento?", options: [
+    { label: "Vivir la experiencia y retarme", w: { CM: 3, OP: 1 } },
+    { label: "Pelear por el podio", w: { OP: 4 } },
+  ]},
+];
+
+const DIVISIONS = {
+  CM: { name: "Community", tag: "Una jornada. Un reto. Toda la energía. $2,000 MXN por pareja.",
+    desc: "La categoría para quienes vienen por la experiencia, la adrenalina y la comunidad. Compiten en pareja el sábado 14 en la Hybrid Race, con relevos libres y cargas ajustadas.",
+    recommend: "Foco en cardio y constancia. El sábado lo darán todo.", href: "./Tampico Hybrid Fest - Community.dc.html" },
+  OP: { name: "Open", tag: "Dos días. Cero excusas. Por el ranking. $2,300 MXN por pareja.",
+    desc: "La modalidad Full Weekend: Hybrid Race el sábado 14 con cargas Open y Zone Challenge el domingo 15, cien minutos en seis zonas. Aquí se define el título The Fittest.",
+    recommend: "Trabajen fuerza, cardio y técnica. No hay margen de error.", href: "./Tampico Hybrid Fest - Open.dc.html" },
+};
+
+class Component extends DCLogic {
+  state = { step: 0, answers: [], result: null };
+
+  handleAnswer(idx) {
+    const next = [...this.state.answers, idx];
+    if (this.state.step + 1 < QUESTIONS.length) {
+      this.setState({ answers: next, step: this.state.step + 1 });
+    } else {
+      const scores = { CM: 0, OP: 0 };
+      next.forEach((a, qi) => {
+        const w = QUESTIONS[qi].options[a].w;
+        Object.keys(w).forEach((d) => { scores[d] += w[d] || 0; });
+      });
+      const winner = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+      this.setState({ answers: next, result: winner });
+    }
+  }
+
+  back() {
+    if (this.state.step === 0) return;
+    this.setState({ answers: this.state.answers.slice(0, -1), step: this.state.step - 1 });
+  }
+
+  reset() { this.setState({ step: 0, answers: [], result: null }); }
+
+  renderVals() {
+    const { step, result } = this.state;
+    const total = QUESTIONS.length;
+    const progress = result ? 100 : Math.round((step / total) * 100);
+
+    if (result) {
+      const info = DIVISIONS[result];
+      return {
+        isQuestion: false, isResult: true, progress,
+        resultName: info.name, resultTag: info.tag, resultDesc: info.desc,
+        resultRecommend: info.recommend, resultHref: info.href,
+        reset: () => this.reset(),
+      };
+    }
+
+    const q = QUESTIONS[step];
+    return {
+      isQuestion: true, isResult: false, progress,
+      questionNumber: step + 1, totalQuestions: total,
+      currentQuestion: q.q,
+      currentOptions: q.options.map((o, i) => ({ label: o.label, onClick: () => this.handleAnswer(i) })),
+      canGoBack: step > 0,
+      back: () => this.back(),
+    };
+  }
+}
+</script>
+</body>
+</html>

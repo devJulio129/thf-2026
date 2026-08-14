@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./image-slot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; -webkit-font-smoothing: antialiased; }
+::selection { background: #f45a0b; color: #000; }
+a { color: #f45a0b; text-decoration: none; }
+.thf-wordmark { font-family: 'Russo One','Inter',system-ui,sans-serif; font-style: italic; }
+.thf-card { border-radius: 24px; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.02); }
+.thf-input { width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.4); padding: 12px 16px; font-size: 14px; color: #fff; outline: none; font-family: inherit; }
+.thf-input::placeholder { color: rgba(255,255,255,.3); }
+select.thf-input { color-scheme: dark; }
+</style>
+</helmet>
+
+<div style="font-family: 'Inter', system-ui, sans-serif; background: #080808; color: #f5f3ee; min-height: 100vh;">
+  <header style="border-bottom: 1px solid rgba(255,255,255,.1); background: rgba(8,8,8,.8); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 40;">
+    <div style="max-width: 1200px; margin: 0 auto; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <a href="./Tampico Hybrid Fest - Landing.dc.html" style="font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,.6);">Inicio</a>
+      </div>
+      <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b;">Credencial del atleta</div>
+      <a href="./Tampico Hybrid Fest - Landing.dc.html" style="font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,.6);">⏻ Salir</a>
+    </div>
+  </header>
+
+  <main style="padding: 40px 20px 80px;">
+    <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: 24px;">
+
+      <div style="display: grid; gap: 24px; align-content: start;">
+        <div class="thf-card" style="padding: 32px; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: -80px; right: -80px; width: 260px; height: 260px; border-radius: 50%; background: rgba(244,90,11,.15); filter: blur(60px);"></div>
+          <div style="position: relative; display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap;">
+            <div style="position: relative; width: 112px; height: 112px; border-radius: 24px; overflow: hidden; border: 1px solid rgba(244,90,11,.4); background: linear-gradient(135deg,#f45a0b,#ff7a2e); flex-shrink: 0;">
+              <image-slot id="profile-athlete-photo" shape="rounded" radius="24" placeholder="Arrastra tu foto"></image-slot>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b; margin-bottom: 8px;">{{ divisionLabel }}</div>
+              <h1 class="thf-wordmark" style="font-size: clamp(1.8rem,4vw,2.6rem); text-transform: uppercase; margin: 0 0 8px;">{{ form.displayName }}</h1>
+              <p style="font-size: 14px; color: rgba(255,255,255,.55); margin: 0 0 16px;">atleta@correo.com</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <span style="border-radius: 999px; border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.3); padding: 6px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,.8);">📅 14 — 15 Nov 2026</span>
+                <span style="border-radius: 999px; border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.3); padding: 6px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,.8);">📍 La Velaria · Recinto Ferial</span>
+                <span style="border-radius: 999px; border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.3); padding: 6px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,.8);">👕 Playera {{ form.shirtSize }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="thf-card" style="padding: 32px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+            <div>
+              <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b; margin-bottom: 4px;">Datos personales</div>
+              <h2 class="thf-wordmark" style="font-size: 22px; text-transform: uppercase; margin: 0;">Editar perfil</h2>
+            </div>
+            <button type="button" onClick="{{ toggleEditing }}" style="border-radius: 999px; border: 1px solid rgba(255,255,255,.2); background: none; color: #fff; padding: 8px 16px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer;">✎ {{ editLabel }}</button>
+          </div>
+
+          <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
+            <form onSubmit="{{ saveProfile }}" style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px;">
+              <div>
+                <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); display: block; margin-bottom: 8px;">Nombre / Apodo</label>
+                <input class="thf-input" value="{{ form.displayName }}" onInput="{{ setDisplayName }}" placeholder="Cómo te conocen" />
+              </div>
+              <div>
+                <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); display: block; margin-bottom: 8px;">Ciudad</label>
+                <input class="thf-input" value="{{ form.city }}" onInput="{{ setCity }}" placeholder="Tampico, Madero, Altamira…" />
+              </div>
+              <div>
+                <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); display: block; margin-bottom: 8px;">Fecha de nacimiento</label>
+                <input class="thf-input" type="date" value="{{ form.birthDate }}" onInput="{{ setBirthDate }}" />
+              </div>
+              <div>
+                <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); display: block; margin-bottom: 8px;">Talla de playera</label>
+                <select class="thf-input" value="{{ form.shirtSize }}" onChange="{{ setShirtSize }}">
+                  <sc-for list="{{ sizes }}" as="sz" hint-placeholder-count="6">
+                    <option value="{{ sz }}">{{ sz }}</option>
+                  </sc-for>
+                </select>
+              </div>
+              <div style="grid-column: span 2; margin-top: 8px; border-top: 1px solid rgba(255,255,255,.12); padding-top: 20px;">
+                <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b;">Atleta 2 · tu pareja</div>
+                <p style="margin: 8px 0 0; font-size: 12px; color: rgba(255,255,255,.5);">Ambos atletas compiten con el mismo registro y la misma inscripción.</p>
+              </div>
+              <div>
+                <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); display: block; margin-bottom: 8px;">Nombre / Apodo</label>
+                <input class="thf-input" value="{{ form2.displayName }}" onInput="{{ setDisplayName2 }}" placeholder="Cómo se le conoce" />
+              </div>
+              <div>
+                <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); display: block; margin-bottom: 8px;">Ciudad</label>
+                <input class="thf-input" value="{{ form2.city }}" onInput="{{ setCity2 }}" placeholder="Tampico, Madero, Altamira…" />
+              </div>
+              <div>
+                <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); display: block; margin-bottom: 8px;">Fecha de nacimiento</label>
+                <input class="thf-input" type="date" value="{{ form2.birthDate }}" onInput="{{ setBirthDate2 }}" />
+              </div>
+              <div>
+                <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); display: block; margin-bottom: 8px;">Talla de playera</label>
+                <select class="thf-input" value="{{ form2.shirtSize }}" onChange="{{ setShirtSize2 }}">
+                  <sc-for list="{{ sizes }}" as="sz" hint-placeholder-count="6">
+                    <option value="{{ sz }}">{{ sz }}</option>
+                  </sc-for>
+                </select>
+              </div>
+              <div style="grid-column: span 2;">
+                <button type="submit" style="border-radius: 999px; background: #f45a0b; color: #000; padding: 12px 24px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; border: none; cursor: pointer;">💾 Guardar</button>
+              </div>
+            </form>
+          </sc-if>
+          <sc-if value="{{ notEditing }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 12px;">Atleta 1</div>
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px;">
+                <sc-for list="{{ infoRows }}" as="row" hint-placeholder-count="4">
+                  <div style="border-radius: 12px; border: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.2); padding: 12px 16px;">
+                    <div style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 4px;">{{ row.label }}</div>
+                    <div style="color: rgba(255,255,255,.9);">{{ row.value }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b; margin: 24px 0 12px;">Atleta 2 · tu pareja</div>
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px;">
+                <sc-for list="{{ infoRows2 }}" as="row" hint-placeholder-count="4">
+                  <div style="border-radius: 12px; border: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.2); padding: 12px 16px;">
+                    <div style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 4px;">{{ row.label }}</div>
+                    <div style="color: rgba(255,255,255,.9);">{{ row.value }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div class="thf-card" style="padding: 32px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+            <span style="color: #f45a0b;">👥</span>
+            <h2 class="thf-wordmark" style="font-size: 22px; text-transform: uppercase; margin: 0;">Mi equipo</h2>
+          </div>
+
+          <sc-if value="{{ noTeam }}" hint-placeholder-val="{{ true }}">
+            <div style="text-align: center; padding: 32px 16px;">
+              <div style="width: 56px; height: 56px; border-radius: 50%; border: 1px solid rgba(244,90,11,.3); background: rgba(244,90,11,.1); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 22px;">👥</div>
+              <h3 class="thf-wordmark" style="font-size: 24px; text-transform: uppercase; margin: 0 0 12px;">Aún no tienes equipo</h3>
+              <p style="font-size: 14px; color: rgba(255,255,255,.6); max-width: 44ch; margin: 0 auto 24px;">Crea tu escuadra de 2 atletas, elige un emblema único y paga la inscripción completa desde tu perfil.</p>
+              <button type="button" onClick="{{ startCreateTeam }}" style="border-radius: 999px; background: #f45a0b; color: #000; padding: 12px 24px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; border: none; cursor: pointer;">+ Crear equipo</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ creatingTeam }}" hint-placeholder-val="{{ false }}">
+            <form onSubmit="{{ createTeam }}" style="display: grid; gap: 20px;">
+              <div style="font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b;">{{ formTitle }}</div>
+              <div>
+                <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); display: block; margin-bottom: 8px;">Nombre del equipo</label>
+                <input class="thf-input" value="{{ teamName }}" onInput="{{ setTeamName }}" placeholder="Ej. Alacranes Tampico" required="" />
+              </div>
+
+              <div style="border-radius: 20px; border: 1px solid rgba(255,255,255,.12); background: rgba(0,0,0,.35); padding: 20px; display: grid; grid-template-columns: 220px minmax(0,1fr); gap: 24px;">
+                <div>
+                  <div style="font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,.4);">Vista previa</div>
+                  <div style="margin-top: 14px; width: 200px; height: 200px;">{{ emblemPreview }}</div>
+                  <button type="button" onClick="{{ randomizeEmblem }}" style="margin-top: 14px; width: 200px; border-radius: 999px; border: 1px solid rgba(244,90,11,.5); background: rgba(244,90,11,.08); color: #f45a0b; padding: 10px; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;">↺ Sorprenderme</button>
+                </div>
+
+                <div style="display: grid; gap: 18px; align-content: start;">
+                  <div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px;">
+                      <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4);">Capa 1 · Placa</label>
+                      <input type="color" value="{{ colorPlate }}" onInput="{{ setColorPlate }}" style="width: 42px; height: 26px; border: none; background: transparent; cursor: pointer;" />
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 8px;">
+                      <sc-for list="{{ plateOptions }}" as="o" hint-placeholder-count="12">
+                        <button type="button" onClick="{{ o.onClick }}" title="{{ o.name }}" style="border-radius: 10px; padding: 7px; cursor: pointer; border: 1px solid {{ o.border }}; background: {{ o.bg }};">{{ o.svg }}</button>
+                      </sc-for>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px;">
+                      <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4);">Capa 2 · Patrón</label>
+                      <input type="color" value="{{ colorPattern }}" onInput="{{ setColorPattern }}" style="width: 42px; height: 26px; border: none; background: transparent; cursor: pointer;" />
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 8px;">
+                      <sc-for list="{{ patternOptions }}" as="o" hint-placeholder-count="8">
+                        <button type="button" onClick="{{ o.onClick }}" title="{{ o.name }}" style="border-radius: 10px; padding: 7px; cursor: pointer; border: 1px solid {{ o.border }}; background: {{ o.bg }};">{{ o.svg }}</button>
+                      </sc-for>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px;">
+                      <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4);">Capa 3 · Símbolo</label>
+                      <input type="color" value="{{ colorIcon }}" onInput="{{ setColorIcon }}" style="width: 42px; height: 26px; border: none; background: transparent; cursor: pointer;" />
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 8px;">
+                      <sc-for list="{{ iconOptions }}" as="o" hint-placeholder-count="16">
+                        <button type="button" onClick="{{ o.onClick }}" title="{{ o.name }}" style="border-radius: 10px; padding: 6px; cursor: pointer; border: 1px solid {{ o.border }}; background: {{ o.bg }};">{{ o.svg }}</button>
+                      </sc-for>
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px;">
+                    <div>
+                      <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); display: block; margin-bottom: 10px;">Tamaño del símbolo</label>
+                      <input type="range" min="45" max="100" step="5" value="{{ iconScale }}" onInput="{{ setIconScale }}" style="width: 100%; accent-color: #f45a0b;" />
+                    </div>
+                    <div>
+                      <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); display: block; margin-bottom: 10px;">Giro del patrón</label>
+                      <input type="range" min="0" max="345" step="15" value="{{ patternRotation }}" onInput="{{ setPatternRotation }}" style="width: 100%; accent-color: #f45a0b;" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); display: block; margin-bottom: 8px;">Atletas (2 por equipo)</label>
+                <div style="display: grid; gap: 8px;">
+                  <input class="thf-input" value="{{ athlete1 }}" onInput="{{ setAthlete1 }}" placeholder="Atleta 1 (líder)" required="" />
+                  <input class="thf-input" value="{{ athlete2 }}" onInput="{{ setAthlete2 }}" placeholder="Atleta 2" required="" />
+                </div>
+              </div>
+              <div>
+                <label style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); display: block; margin-bottom: 10px;">Categoría del equipo</label>
+                <div style="display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px;">
+                  <sc-for list="{{ genderOptions }}" as="g" hint-placeholder-count="3">
+                    <button type="button" onClick="{{ g.onClick }}" style="border-radius: 14px; border: 1px solid {{ g.border }}; background: {{ g.bg }}; color: {{ g.color }}; padding: 14px 10px; cursor: pointer; font-family: inherit; text-align: center;">
+                      <div style="font-size: 18px;">{{ g.icon }}</div>
+                      <div style="margin-top: 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;">{{ g.label }}</div>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display: flex; gap: 12px;">
+                <button type="submit" style="border-radius: 999px; background: #f45a0b; color: #000; padding: 12px 24px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; border: none; cursor: pointer;">{{ formSubmitLabel }}</button>
+                <button type="button" onClick="{{ cancelCreateTeam }}" style="border-radius: 999px; border: 1px solid rgba(255,255,255,.2); background: none; color: #fff; padding: 12px 24px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;">Cancelar</button>
+              </div>
+            </form>
+          </sc-if>
+
+          <sc-if value="{{ hasTeam }}" hint-placeholder-val="{{ false }}">
+            <div style="display: grid; gap: 20px;">
+              <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="width: 72px; height: 72px; flex-shrink: 0;">{{ emblemPreview }}</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b; margin-bottom: 4px;">Equipo · {{ divisionLabel }} · {{ teamGenderLabel }}</div>
+                  <div class="thf-wordmark" style="font-size: 24px; text-transform: uppercase;">{{ teamName }}</div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                  <button type="button" onClick="{{ startEditTeam }}" style="border-radius: 999px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.05); color: #fff; padding: 8px 16px; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;">✎ Editar equipo</button>
+                  <button type="button" onClick="{{ deleteTeam }}" style="border-radius: 999px; border: 1px solid rgba(239,68,68,.35); background: rgba(239,68,68,.08); color: #f87171; padding: 8px 16px; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;">🗑 Eliminar</button>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px;">
+                <div style="border-radius: 16px; border: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.3); padding: 16px; display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(244,90,11,.1); border: 1px solid rgba(244,90,11,.3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #f45a0b;">{{ athleteInitial1 }}</div>
+                  <div><div style="font-size: 14px;">{{ athlete1 }}</div><div style="font-size: 10px; color: #f45a0b; text-transform: uppercase; letter-spacing: 0.1em;">👑 Líder</div></div>
+                </div>
+                <div style="border-radius: 16px; border: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.3); padding: 16px; display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(244,90,11,.1); border: 1px solid rgba(244,90,11,.3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #f45a0b;">{{ athleteInitial2 }}</div>
+                  <div style="font-size: 14px;">{{ athlete2 }}</div>
+                </div>
+              </div>
+              <div style="border-radius: 16px; border: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.3); padding: 20px;">
+                <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 16px;">
+                  <div><div style="font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 4px;">Inscripción por pareja</div><div class="thf-wordmark" style="font-size: 26px;">${{ total }} MXN</div></div>
+                  <div style="text-align: right;"><div style="font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 4px;">Estatus</div><div class="thf-wordmark" style="font-size: 18px; color: {{ payStatusColor }};">{{ payStatus }}</div></div>
+                </div>
+                <div style="display: grid; gap: 6px; margin-bottom: 18px;">
+                  <sc-for list="{{ payRows }}" as="r" hint-placeholder-count="3">
+                    <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 12px; border-bottom: 1px dotted rgba(255,255,255,.14); padding-bottom: 6px;">
+                      <span style="color: rgba(255,255,255,.5);">{{ r.label }}</span><span style="color: rgba(255,255,255,.88);">{{ r.value }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ hasRemaining }}" hint-placeholder-val="{{ true }}">
+                  <div>
+                    <button type="button" onClick="{{ payFull }}" style="width: 100%; border-radius: 999px; background: #00b1ea; color: #001d2e; padding: 15px 18px; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
+                      Pagar ${{ total }} con Mercado Pago →
+                    </button>
+                    <p style="margin: 12px 0 0; font-size: 11px; line-height: 1.6; color: rgba(255,255,255,.45);">Pago único por el equipo completo. Aceptamos tarjeta de crédito y débito, meses sin intereses y saldo de Mercado Pago. No hay pagos parciales ni apartados.</p>
+
+                    <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,.12); padding-top: 18px;">
+                      <button type="button" onClick="{{ toggleTransfer }}" style="width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: none; border: none; cursor: pointer; padding: 0; color: #fff; font-family: inherit;">
+                        <span style="font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,.7);">O paga por transferencia bancaria</span>
+                        <span style="color: #f45a0b; font-size: 16px;">{{ transferSign }}</span>
+                      </button>
+
+                      <div style="display: {{ transferDisplay }}; margin-top: 16px;">
+                        <div style="display: grid; gap: 8px;">
+                          <sc-for list="{{ bankRows }}" as="b" hint-placeholder-count="5">
+                            <div style="border-radius: 12px; border: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.35); padding: 12px 14px;">
+                              <div style="font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,.4);">{{ b.label }}</div>
+                              <div style="margin-top: 5px; font-size: 15px; color: #fff; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; white-space: nowrap; overflow-x: auto;">{{ b.value }}</div>
+                              <button type="button" onClick="{{ b.copy }}" style="margin-top: 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,.2); background: none; color: rgba(255,255,255,.8); padding: 7px 12px; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; font-family: inherit;">{{ b.copyLabel }}</button>
+                            </div>
+                          </sc-for>
+                        </div>
+                        <ol style="margin: 16px 0 0; padding-left: 18px; display: grid; gap: 7px; font-size: 12px; line-height: 1.6; color: rgba(255,255,255,.6);">
+                          <li>Transfiere el monto exacto de <span style="color: #fff;">${{ total }} MXN</span> en una sola exhibición.</li>
+                          <li>Usa como concepto el nombre de tu equipo: <span style="color: #fff;">{{ transferConcept }}</span>.</li>
+                          <li>Envía tu comprobante por WhatsApp; validamos en menos de 24 h y se libera tu credencial.</li>
+                        </ol>
+                        <a href="https://wa.me/528334305108" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; border-radius: 999px; background: #25d366; color: #05240f; padding: 12px 18px; font-size: 12px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase;">Enviar comprobante →</a>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ isPaidFull }}" hint-placeholder-val="{{ false }}">
+                  <div style="border-radius: 12px; background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3); padding: 12px; text-align: center; font-size: 13px; color: #4ade80; text-transform: uppercase; letter-spacing: 0.05em;">✓ Equipo pagado al 100%</div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <div>
+        <div class="thf-card" style="padding: 24px; text-align: center; position: sticky; top: 88px; background: linear-gradient(135deg, rgba(244,90,11,.1), rgba(0,0,0,.4), #000); border-color: rgba(244,90,11,.2);">
+          <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b; margin-bottom: 16px;">▦ Credencial digital</div>
+          <sc-if value="{{ isPaidFull }}" hint-placeholder-val="{{ false }}">
+            <div style="background: #fff; border-radius: 16px; padding: 16px; display: inline-block; margin-bottom: 16px;">
+              <div style="width: 160px; height: 160px; background: repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 0 0/24px 24px; border-radius: 8px;"></div>
+            </div>
+            <div style="font-size: 11px; color: #4ade80; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;">🛡 Inscripción pagada</div>
+          </sc-if>
+          <sc-if value="{{ notPaidFull }}" hint-placeholder-val="{{ true }}">
+            <div style="border-radius: 16px; border: 1px dashed rgba(244,90,11,.4); background: rgba(0,0,0,.4); padding: 32px 24px; margin-bottom: 16px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+              <span style="font-size: 28px;">🔒</span>
+              <p style="font-size: 12px; color: rgba(255,255,255,.6); line-height: 1.6; margin: 0;">Tu credencial QR se libera cuando tu equipo complete el pago de la inscripción.</p>
+              <sc-if value="{{ hasTeam }}" hint-placeholder-val="{{ false }}">
+                <p style="font-size: 11px; color: #f45a0b; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Falta el pago de ${{ total }} MXN</p>
+              </sc-if>
+              <sc-if value="{{ noTeam }}" hint-placeholder-val="{{ true }}">
+                <p style="font-size: 11px; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Primero crea tu equipo</p>
+              </sc-if>
+            </div>
+          </sc-if>
+          <div class="thf-wordmark" style="font-size: 20px; text-transform: uppercase; margin-bottom: 4px;">THF 2026</div>
+          <div style="font-size: 12px; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;">{{ divisionLabel }}</div>
+          <a href="{{ divisionHref }}" style="display: block; border-radius: 999px; border: 1px solid rgba(244,90,11,.4); background: rgba(244,90,11,.05); color: #f45a0b; padding: 12px; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Ver mi categoría →</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:900},&quot;division&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;CM&quot;,&quot;options&quot;:[&quot;CM&quot;,&quot;OP&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Atleta&quot;}}">
+const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
+// Emblema por capas, estilo Halo: placa + patrón + símbolo, cada capa con su color.
+const PLATES = [
+  { id: "shield", name: "Escudo", d: "M50 6 L88 20 V52 C88 74 70 88 50 95 C30 88 12 74 12 52 V20 Z" },
+  { id: "hex", name: "Hexágono", d: "M50 5 L89 27 V73 L50 95 L11 73 V27 Z" },
+  { id: "circle", name: "Círculo", d: "M50 5 A45 45 0 1 1 49.9 5 Z" },
+  { id: "diamond", name: "Diamante", d: "M50 4 L95 50 L50 96 L5 50 Z" },
+  { id: "square", name: "Placa", d: "M12 12 H88 V88 H12 Z" },
+  { id: "octagon", name: "Octágono", d: "M34 6 H66 L94 34 V66 L66 94 H34 L6 66 V34 Z" },
+  { id: "triangle", name: "Triángulo", d: "M50 8 L94 88 H6 Z" },
+  { id: "pentagon", name: "Pentágono", d: "M50 5 L94 37 L77 90 H23 L6 37 Z" },
+  { id: "star", name: "Estrella", d: "M50 5 L62 38 L96 39 L69 59 L79 92 L50 73 L21 92 L31 59 L4 39 L38 38 Z" },
+  { id: "cross", name: "Cruz", d: "M36 8 H64 V36 H92 V64 H64 V92 H36 V64 H8 V36 H36 Z" },
+  { id: "banner", name: "Banderín", d: "M14 8 H86 V78 L50 96 L14 78 Z" },
+  { id: "arrow", name: "Punta", d: "M50 4 L92 30 V70 L50 96 L8 70 V30 Z" },
+];
+const PATTERNS = [
+  { id: "none", name: "Sin patrón", ds: [] },
+  { id: "half", name: "Mitad", ds: ["M50 0 H100 V100 H50 Z"] },
+  { id: "bars", name: "Franjas", ds: ["M0 18 H100 V30 H0 Z", "M0 44 H100 V56 H0 Z", "M0 70 H100 V82 H0 Z"] },
+  { id: "diag", name: "Diagonal", ds: ["M-10 70 L70 -10 L100 20 L20 100 Z"] },
+  { id: "chevron", name: "Chevron", ds: ["M50 20 L92 62 L74 80 L50 56 L26 80 L8 62 Z"] },
+  { id: "ring", name: "Anillo", ds: ["M50 14 A36 36 0 1 1 49.9 14 Z M50 32 A18 18 0 1 0 50.1 32 Z"] },
+  { id: "split", name: "Corte", ds: ["M0 100 L100 0 V100 Z"] },
+  { id: "quad", name: "Cuadrantes", ds: ["M0 0 H50 V50 H0 Z", "M50 50 H100 V100 H50 Z"] },
+];
+const ICONS = [
+  { id: "skull", name: "Calavera", ds: ["M50 12c-16 0-28 12-28 28 0 9 4 15 8 19v9c0 4 3 8 8 8h24c5 0 8-4 8-8v-9c4-4 8-10 8-19 0-16-12-28-28-28zm-11 26a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm22 0a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm-11 20 5 9h-10z"] },
+  { id: "bolt", name: "Rayo", ds: ["M56 8 24 56h18l-6 36 34-52H52z"] },
+  { id: "flame", name: "Llama", ds: ["M50 8c8 16-6 22-6 34 0 8 6 12 6 12s-14 4-14 18 12 20 14 20c-24-2-30-18-30-32C20 36 44 30 50 8zm8 26c14 10 22 20 22 34 0 14-10 24-24 26 4-6 8-12 8-20 0-14-14-18-6-40z"] },
+  { id: "crown", name: "Corona", ds: ["M12 34 28 52 50 20l22 32 16-18-8 44H20z"] },
+  { id: "kettle", name: "Kettlebell", ds: ["M50 14c-12 0-20 8-20 18 0 5 2 9 5 12-9 5-13 14-13 24 0 8 6 14 14 14h28c8 0 14-6 14-14 0-10-4-19-13-24 3-3 5-7 5-12 0-10-8-18-20-18zm0 10c6 0 10 4 10 9s-4 9-10 9-10-4-10-9 4-9 10-9z"] },
+  { id: "scorpion", name: "Alacrán", ds: ["M30 34 20 22l-8 6 12 16-8 12 10 8 8-10 12 12v14l10 10 10-10-6-12 12-16-10-8-10 12-14-14z"] },
+  { id: "paw", name: "Garra", ds: ["M32 30a8 9 0 1 1 0 18 8 9 0 0 1 0-18zm36 0a8 9 0 1 1 0 18 8 9 0 0 1 0-18zM50 22a8 9 0 1 1 0 18 8 9 0 0 1 0-18zM50 54c12 0 22 8 22 16s-10 10-22 10-22-2-22-10 10-16 22-16z"] },
+  { id: "anchor", name: "Ancla", ds: ["M46 14h8v14h12v10H54v34c12-2 20-10 22-22h10c-2 22-18 36-36 36S16 72 14 50h10c2 12 10 20 22 22V38H34V28h12z"] },
+  { id: "eye", name: "Ojo", ds: ["M50 26c20 0 34 14 40 24-6 10-20 24-40 24S16 60 10 50c6-10 20-24 40-24zm0 12a12 12 0 1 0 0 24 12 12 0 0 0 0-24z"] },
+  { id: "wing", name: "Ala", ds: ["M14 30c22 0 40 8 52 22-8 4-16 4-24 2 8 8 16 12 26 14-12 8-30 6-42-6C16 52 14 40 14 30z"] },
+  { id: "trident", name: "Tridente", ds: ["M46 12h8v20h10V20h10v22c0 8-6 14-14 16v34h-8V58c-8-2-14-8-14-16V20h10v12h-2z"] },
+  { id: "wave", name: "Ola", ds: ["M10 40c10-12 22-12 32 0s22 12 32 0l14 14c-10 12-22 12-32 0s-22-12-32 0zm0 26c10-12 22-12 32 0s22 12 32 0l14 12c-10 12-22 12-32 0s-22-12-32 0z"] },
+  { id: "star", name: "Estrella", ds: ["M50 14 61 40l28 2-21 18 6 28-24-15-24 15 6-28-21-18 28-2z"] },
+  { id: "target", name: "Diana", ds: ["M50 12a38 38 0 1 0 0 76 38 38 0 0 0 0-76zm0 12a26 26 0 1 1 0 52 26 26 0 0 1 0-52zm0 12a14 14 0 1 0 0 28 14 14 0 0 0 0-28z"] },
+  { id: "fist", name: "Puño", ds: ["M28 38c0-8 6-14 14-14h20c8 0 14 6 14 14v6h4c4 0 6 4 6 8v12c0 12-10 22-22 22H44c-10 0-16-6-16-16zm12-2v10h8V36zm14 0v10h8V36z"] },
+  { id: "mountain", name: "Cumbre", ds: ["M50 18 84 82H16zm0 22-14 26h28z"] },
+];
+
+const h = React.createElement;
+const svgRoot = (children, extraStyle) =>
+  h("svg", { viewBox: "0 0 100 100", width: "100%", height: "100%", style: { display: "block", width: "100%", aspectRatio: "1 / 1", ...(extraStyle || {}) } }, children);
+const paths = (ds, fill, keyPrefix) =>
+  ds.map((d, i) => h("path", { key: keyPrefix + i, d, fill, fillRule: "evenodd" }));
+
+const buildEmblem = (s) => {
+  const plate = PLATES.find((p) => p.id === s.plate) || PLATES[0];
+  const pattern = PATTERNS.find((p) => p.id === s.pattern) || PATTERNS[0];
+  const icon = ICONS.find((i) => i.id === s.icon) || ICONS[0];
+  const cid = "clip-" + plate.id;
+  const scale = (s.iconScale || 70) / 100;
+  const off = 50 - 50 * scale;
+  return svgRoot([
+    h("defs", { key: "defs" }, h("clipPath", { id: cid }, h("path", { d: plate.d }))),
+    h("path", { key: "plate", d: plate.d, fill: s.colorPlate }),
+    h("g", { key: "pattern", clipPath: "url(#" + cid + ")", transform: "rotate(" + (s.patternRotation || 0) + " 50 50)" },
+      paths(pattern.ds, s.colorPattern, "pt")),
+    h("path", { key: "edge", d: plate.d, fill: "none", stroke: "rgba(0,0,0,.45)", strokeWidth: 3 }),
+    h("g", { key: "icon", transform: "translate(" + off + " " + off + ") scale(" + scale + ")" },
+      paths(icon.ds, s.colorIcon, "ic")),
+  ], { filter: "drop-shadow(0 6px 14px rgba(0,0,0,.5))" });
+};
+const PRICES = { CM: 2000, OP: 2300 };
+const GENDERS = [
+  { key: "MM", label: "Hombre / Hombre", icon: "♂♂" },
+  { key: "MX", label: "Hombre / Mujer", icon: "♂♀" },
+  { key: "FF", label: "Mujer / Mujer", icon: "♀♀" },
+];
+// Datos bancarios de ejemplo — reemplazar por los reales de la cuenta THF antes de publicar.
+const BANK = [
+  { label: "Banco", value: "BBVA México" },
+  { label: "Titular", value: "Tampico Hybrid Fest S.A. de C.V." },
+  { label: "Cuenta", value: "0123 4567 89" },
+  { label: "CLABE", value: "012 180 01234567890 5" },
+  { label: "Referencia", value: "THF2026" },
+];
+
+class Component extends DCLogic {
+  state = {
+    editing: false,
+    form: { displayName: "Atleta THF", city: "Tampico", birthDate: "1996-04-12", shirtSize: "M" },
+    division: "CM",
+    creatingTeam: false,
+    team: null,
+    teamName: "", athlete1: "", athlete2: "",
+    plate: "shield", pattern: "diag", icon: "skull",
+    colorPlate: "#f45a0b", colorPattern: "#101010", colorIcon: "#f5f3ee",
+    iconScale: 70, patternRotation: 0,
+    paidCents: 0,
+    showTransfer: false,
+    copied: null,
+    teamGender: "MX",
+    form2: { displayName: "", city: "", birthDate: "", shirtSize: "M" },
+  };
+
+  setField2(field, value) {
+    this.setState({ form2: { ...this.state.form2, [field]: value } });
+  }
+
+  toggleEditing() { this.setState({ editing: !this.state.editing }); }
+  setDisplayName(e) { this.setState({ form: { ...this.state.form, displayName: e.target.value } }); }
+  setCity(e) { this.setState({ form: { ...this.state.form, city: e.target.value } }); }
+  setBirthDate(e) { this.setState({ form: { ...this.state.form, birthDate: e.target.value } }); }
+  setShirtSize(e) { this.setState({ form: { ...this.state.form, shirtSize: e.target.value } }); }
+  saveProfile(e) { e.preventDefault(); this.setState({ editing: false }); }
+
+  startCreateTeam() { this.setState({ creatingTeam: true }); }
+  cancelCreateTeam() { this.setState({ creatingTeam: false }); }
+  setTeamName(e) { this.setState({ teamName: e.target.value }); }
+  setAthlete1(e) { this.setState({ athlete1: e.target.value }); }
+  setAthlete2(e) { this.setState({ athlete2: e.target.value }); }
+
+  randomizeEmblem() {
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const palette = ["#f45a0b", "#ff7a2e", "#f5f3ee", "#101010", "#1e3a8a", "#7f1d1d", "#065f46", "#facc15", "#4c1d95", "#0e7490"];
+    this.setState({
+      plate: pick(PLATES).id, pattern: pick(PATTERNS).id, icon: pick(ICONS).id,
+      colorPlate: pick(palette), colorPattern: pick(palette), colorIcon: pick(palette),
+      iconScale: 45 + Math.floor(Math.random() * 12) * 5,
+      patternRotation: Math.floor(Math.random() * 24) * 15,
+    });
+  }
+
+  createTeam(e) {
+    e.preventDefault();
+    const isNew = !this.state.team;
+    this.setState({ team: { name: this.state.teamName }, creatingTeam: false, paidCents: isNew ? 0 : this.state.paidCents });
+  }
+
+  startEditTeam() { this.setState({ creatingTeam: true }); }
+
+  deleteTeam() {
+    if (!window.confirm("¿Eliminar tu equipo? Se pierde el emblema y el pago registrado.")) return;
+    this.setState({ team: null, creatingTeam: false, paidCents: 0, teamName: "", athlete1: "", athlete2: "" });
+  }
+
+  payFull() {
+    const total = PRICES[this.state.division] * 100;
+    this.setState({ paidCents: total });
+  }
+
+  renderVals() {
+    const { editing, form, division, creatingTeam, team, teamName, athlete1, athlete2, paidCents,
+      plate, pattern, icon, colorPlate, colorPattern, colorIcon, iconScale, patternRotation } = this.state;
+    const emblemState = { plate, pattern, icon, colorPlate, colorPattern, colorIcon, iconScale, patternRotation };
+    const optionStyle = (active) => ({
+      border: active ? "#f45a0b" : "rgba(255,255,255,.15)",
+      bg: active ? "rgba(244,90,11,.12)" : "rgba(0,0,0,.3)",
+    });
+    const total = PRICES[division];
+    const paid = paidCents / 100;
+    const remaining = Math.max(0, total - paid);
+    const isPaidFull = !!team && remaining === 0;
+
+    return {
+      initials: (form.displayName || "AT").slice(0, 2).toUpperCase(),
+      divisionLabel: division === "OP" ? "Categoría Open" : "Categoría Community",
+      divisionHref: division === "OP" ? "./Tampico Hybrid Fest - Open.dc.html" : "./Tampico Hybrid Fest - Community.dc.html",
+      form,
+      editing, notEditing: !editing,
+      editLabel: editing ? "Cancelar" : "Editar",
+      toggleEditing: () => this.toggleEditing(),
+      setDisplayName: (e) => this.setDisplayName(e),
+      setCity: (e) => this.setCity(e),
+      setBirthDate: (e) => this.setBirthDate(e),
+      setShirtSize: (e) => this.setShirtSize(e),
+      saveProfile: (e) => this.saveProfile(e),
+      sizes: SIZES,
+      infoRows: [
+        { label: "Nombre", value: form.displayName || "—" },
+        { label: "Ciudad", value: form.city || "—" },
+        { label: "Nacimiento", value: form.birthDate || "—" },
+        { label: "Playera", value: form.shirtSize || "—" },
+      ],
+      noTeam: !team && !creatingTeam,
+      creatingTeam,
+      hasTeam: !!team && !creatingTeam,
+      formTitle: team ? "Editar equipo" : "Nuevo equipo",
+      formSubmitLabel: team ? "Guardar cambios" : "Crear equipo",
+      startEditTeam: () => this.startEditTeam(),
+      deleteTeam: () => this.deleteTeam(),
+      startCreateTeam: () => this.startCreateTeam(),
+      cancelCreateTeam: () => this.cancelCreateTeam(),
+      createTeam: (e) => this.createTeam(e),
+      teamName, setTeamName: (e) => this.setTeamName(e),
+      teamGenderLabel: (GENDERS.find((g) => g.key === this.state.teamGender) || GENDERS[0]).label,
+      genderOptions: GENDERS.map((g) => ({
+        label: g.label, icon: g.icon,
+        onClick: () => this.setState({ teamGender: g.key }),
+        border: this.state.teamGender === g.key ? "#f45a0b" : "rgba(255,255,255,.15)",
+        bg: this.state.teamGender === g.key ? "rgba(244,90,11,.14)" : "rgba(0,0,0,.3)",
+        color: this.state.teamGender === g.key ? "#fff" : "rgba(255,255,255,.65)",
+      })),
+      emblemPreview: buildEmblem(emblemState),
+      colorPlate, colorPattern, colorIcon, iconScale, patternRotation,
+      setColorPlate: (e) => this.setState({ colorPlate: e.target.value }),
+      setColorPattern: (e) => this.setState({ colorPattern: e.target.value }),
+      setColorIcon: (e) => this.setState({ colorIcon: e.target.value }),
+      setIconScale: (e) => this.setState({ iconScale: Number(e.target.value) }),
+      setPatternRotation: (e) => this.setState({ patternRotation: Number(e.target.value) }),
+      randomizeEmblem: () => this.randomizeEmblem(),
+      plateOptions: PLATES.map((p) => ({
+        name: p.name, onClick: () => this.setState({ plate: p.id }),
+        svg: svgRoot(paths([p.d], plate === p.id ? colorPlate : "rgba(245,243,238,.55)", "pl-" + p.id)),
+        ...optionStyle(plate === p.id),
+      })),
+      patternOptions: PATTERNS.map((p) => {
+        const active = pattern === p.id;
+        const fill = active ? (colorPattern === "#101010" ? "#f45a0b" : colorPattern) : "rgba(245,243,238,.6)";
+        return {
+          name: p.name, onClick: () => this.setState({ pattern: p.id }),
+          svg: svgRoot([
+            h("defs", { key: "d" }, h("clipPath", { id: "pv-" + p.id }, h("path", { d: "M12 12 H88 V88 H12 Z" }))),
+            h("path", { key: "bg", d: "M12 12 H88 V88 H12 Z", fill: "rgba(245,243,238,.14)" }),
+            h("g", { key: "g", clipPath: "url(#pv-" + p.id + ")" }, paths(p.ds, fill, "pv-" + p.id)),
+          ]),
+          ...optionStyle(active),
+        };
+      }),
+      iconOptions: ICONS.map((i) => ({
+        name: i.name, onClick: () => this.setState({ icon: i.id }),
+        svg: svgRoot(paths(i.ds, icon === i.id ? "#f45a0b" : "rgba(245,243,238,.6)", "io-" + i.id)),
+        ...optionStyle(icon === i.id),
+      })),
+      athlete1, athlete2,
+      setAthlete1: (e) => this.setAthlete1(e),
+      setAthlete2: (e) => this.setAthlete2(e),
+      athleteInitial1: (athlete1 || "A").slice(0, 1).toUpperCase(),
+      athleteInitial2: (athlete2 || "B").slice(0, 1).toUpperCase(),
+      total: total.toLocaleString("es-MX"),
+      remaining: remaining.toLocaleString("es-MX"),
+      paid,
+      payStatus: isPaidFull ? "Pagado" : "Pendiente",
+      payStatusColor: isPaidFull ? "#4ade80" : "#f45a0b",
+      payRows: [
+        { label: "Modalidad", value: division === "OP" ? "Full Weekend · Open" : "Community" },
+        { label: "Cubre", value: "Los 2 atletas del equipo" },
+        { label: "Método", value: "Mercado Pago · pago único" },
+        { label: "Categoría", value: (GENDERS.find((g) => g.key === this.state.teamGender) || GENDERS[0]).label },
+      ],
+      hasRemaining: remaining > 0,
+      isPaidFull, notPaidFull: !isPaidFull,
+      payFull: () => this.payFull(),
+      form2: { ...this.state.form2, displayName: athlete2 },
+      setDisplayName2: (e) => this.setState({ athlete2: e.target.value }),
+      setCity2: (e) => this.setField2("city", e.target.value),
+      setBirthDate2: (e) => this.setField2("birthDate", e.target.value),
+      setShirtSize2: (e) => this.setField2("shirtSize", e.target.value),
+      infoRows2: [
+        { label: "Nombre", value: athlete2 || "Sin capturar" },
+        { label: "Ciudad", value: this.state.form2.city || "Sin capturar" },
+        { label: "Nacimiento", value: this.state.form2.birthDate || "Sin capturar" },
+        { label: "Playera", value: this.state.form2.shirtSize || "—" },
+      ],
+      transferSign: this.state.showTransfer ? "–" : "+",
+      transferDisplay: this.state.showTransfer ? "block" : "none",
+      toggleTransfer: () => this.setState({ showTransfer: !this.state.showTransfer }),
+      transferConcept: "THF " + ((team && team.name) || teamName || "tu equipo"),
+      bankRows: BANK.map((b) => ({
+        label: b.label,
+        value: b.value,
+        copyLabel: this.state.copied === b.label ? "Copiado" : "Copiar",
+        copy: () => {
+          try { navigator.clipboard.writeText(b.value.replace(/\s/g, "")); } catch (e) {}
+          this.setState({ copied: b.label });
+        },
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>

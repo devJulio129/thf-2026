@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; -webkit-font-smoothing: antialiased; }
+::selection { background: #f45a0b; color: #000; }
+a { color: #f45a0b; text-decoration: none; }
+.thf-wordmark { font-family: 'Russo One','Inter',system-ui,sans-serif; font-style: italic; }
+.thf-card { border-radius: 24px; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.02); }
+.thf-input { width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.4); padding: 12px 16px; font-size: 14px; color: #fff; outline: none; font-family: inherit; }
+.thf-input::placeholder { color: rgba(255,255,255,.3); }
+select.thf-input { color-scheme: dark; }
+</style>
+</helmet>
+
+<div style="font-family: 'Inter', system-ui, sans-serif; background: #080808; color: #f5f3ee; min-height: 100vh;">
+  <header style="border-bottom: 1px solid rgba(255,255,255,.1); background: rgba(8,8,8,.8); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 40;">
+    <div style="max-width: 1100px; margin: 0 auto; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;">
+      <a href="./Tampico Hybrid Fest - Landing.dc.html" style="font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,.6);">← Inicio</a>
+      <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b;">Panel de administración</div>
+      <a href="./Tampico Hybrid Fest - Profile.dc.html" style="font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,.6);">Mi perfil</a>
+    </div>
+  </header>
+
+  <main style="padding: 48px 20px 96px;">
+    <div style="max-width: 900px; margin: 0 auto; display: grid; gap: 48px;">
+
+      <section class="thf-card" style="padding: 32px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;"><span style="color:#f45a0b;">🔥</span><h2 class="thf-wordmark" style="font-size: 22px; text-transform: uppercase; margin: 0;">Comp Prep Workout</h2></div>
+        <p style="font-size: 14px; color: rgba(255,255,255,.5); margin: 0 0 24px;">El workout publicado aparece al inicio de la landing page. Solo uno puede estar publicado a la vez.</p>
+
+        <form onSubmit="{{ submitWorkout }}" style="display: grid; gap: 16px; margin-bottom: 32px;">
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px;">
+            <input class="thf-input" value="{{ wodTitle }}" onInput="{{ setWodTitle }}" placeholder="Título (ej. Comp Prep 01 · Engine)" required="" />
+            <input class="thf-input" value="{{ wodSubtitle }}" onInput="{{ setWodSubtitle }}" placeholder="Subtítulo (opcional)" />
+          </div>
+          <textarea class="thf-input" rows="5" value="{{ wodContent }}" onInput="{{ setWodContent }}" placeholder="Contenido del workout, una línea por bloque" required=""></textarea>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px;">
+            <label style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,.7); cursor: pointer;">
+              <input type="checkbox" checked="{{ wodPublished }}" onChange="{{ toggleWodPublished }}" style="width: 16px; height: 16px; accent-color: #f45a0b;" /> Publicar en la landing
+            </label>
+            <button type="submit" style="border-radius: 999px; background: #f45a0b; color: #000; padding: 12px 24px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; border: none; cursor: pointer;">💾 {{ wodSubmitLabel }}</button>
+            <sc-if value="{{ wodEditingExisting }}" hint-placeholder-val="{{ false }}">
+              <button type="button" onClick="{{ cancelWodEdit }}" style="border-radius: 999px; border: 1px solid rgba(255,255,255,.2); background: none; color: #fff; padding: 12px 24px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;">Cancelar</button>
+            </sc-if>
+          </div>
+        </form>
+
+        <div style="display: grid; gap: 8px;">
+          <sc-if value="{{ noWorkouts }}" hint-placeholder-val="{{ false }}">
+            <p style="font-size: 14px; color: rgba(255,255,255,.4);">Aún no hay workouts. Crea el primero arriba.</p>
+          </sc-if>
+          <sc-for list="{{ workouts }}" as="w" hint-placeholder-count="2">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.2); padding: 12px 16px;">
+              <span style="color: {{ w.iconColor }};">📣</span>
+              <div style="flex: 1; min-width: 160px;">
+                <div style="font-size: 14px; color: #fff;">{{ w.title }}</div>
+                <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,.4);">{{ w.statusLabel }}</div>
+              </div>
+              <button type="button" onClick="{{ w.togglePublish }}" style="border-radius: 999px; border: 1px solid rgba(255,255,255,.2); background: none; color: #fff; padding: 6px 12px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer;">{{ w.toggleLabel }}</button>
+              <button type="button" onClick="{{ w.edit }}" style="border-radius: 999px; border: 1px solid rgba(255,255,255,.2); background: none; color: #fff; padding: 6px 12px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer;">✎ Editar</button>
+              <button type="button" onClick="{{ w.remove }}" style="border-radius: 999px; border: 1px solid rgba(239,68,68,.3); background: none; color: #f87171; padding: 6px 12px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer;">🗑 Eliminar</button>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section class="thf-card" style="padding: 32px;">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px;">
+          <div style="display: flex; align-items: center; gap: 10px;"><span style="color:#f45a0b;">👥</span><h2 class="thf-wordmark" style="font-size: 22px; text-transform: uppercase; margin: 0;">Equipos inscritos</h2></div>
+          <div style="font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,.45);">{{ teamsCount }}</div>
+        </div>
+        <p style="font-size: 14px; color: rgba(255,255,255,.5); margin: 0 0 20px;">Registros recibidos desde el portal del atleta. Valida el pago para liberar la credencial del equipo.</p>
+
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; margin-bottom: 22px;">
+          <sc-for list="{{ teamStats }}" as="s" hint-placeholder-count="4">
+            <div style="border-radius: 12px; border: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.25); padding: 14px;">
+              <div style="font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,.4);">{{ s.label }}</div>
+              <div class="thf-wordmark" style="margin-top: 6px; font-size: 22px; color: {{ s.color }};">{{ s.value }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px;">
+          <sc-for list="{{ teamFilters }}" as="f" hint-placeholder-count="4">
+            <button type="button" onClick="{{ f.onClick }}" style="border-radius: 999px; border: 1px solid {{ f.border }}; background: {{ f.bg }}; color: {{ f.color }}; padding: 8px 14px; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; font-family: inherit;">{{ f.label }}</button>
+          </sc-for>
+        </div>
+
+        <div style="display: grid; gap: 8px;">
+          <sc-if value="{{ noTeams }}" hint-placeholder-val="{{ false }}">
+            <div style="border-radius: 12px; border: 1px dashed rgba(255,255,255,.18); padding: 24px; text-align: center; font-size: 13px; color: rgba(255,255,255,.5);">Sin equipos en este filtro.</div>
+          </sc-if>
+          <sc-for list="{{ teams }}" as="tm" hint-placeholder-count="4">
+            <div style="display: grid; grid-template-columns: 40px minmax(0,1fr) 130px 120px 110px; gap: 12px; align-items: center; border-radius: 12px; border: 1px solid {{ tm.border }}; background: rgba(0,0,0,.22); padding: 12px 14px;">
+              <div style="width: 34px; height: 34px; border-radius: 10px; background: rgba(244,90,11,.12); border: 1px solid rgba(244,90,11,.32); display: grid; place-items: center; font-size: 15px;">{{ tm.emblem }}</div>
+              <div style="min-width: 0;">
+                <div class="thf-wordmark" style="font-size: 15px; text-transform: uppercase; color: #fff;">{{ tm.name }}</div>
+                <div style="margin-top: 3px; font-size: 11px; color: rgba(255,255,255,.45);">{{ tm.athletes }}</div>
+              </div>
+              <div style="font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,.62);">{{ tm.division }}</div>
+              <div style="font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,.62);">{{ tm.gender }}</div>
+              <button type="button" onClick="{{ tm.toggle }}" style="border-radius: 999px; border: 1px solid {{ tm.payBorder }}; background: {{ tm.payBg }}; color: {{ tm.payColor }}; padding: 7px 10px; font-size: 10px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; font-family: inherit;">{{ tm.payLabel }}</button>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const EMPTY_WOD = { id: null, title: "", subtitle: "", content: "", isPublished: false };
+
+class Component extends DCLogic {
+  state = {
+    workouts: [{ id: 1, title: "Comp Prep 01 · Engine", subtitle: "Cardio base", content: "3 rounds:\n400m run\n20 wall balls", isPublished: true }],
+    wodForm: { ...EMPTY_WOD },
+    teams: [
+      { id: 1, name: "Alacranes", emblem: "🦂", athletes: "Karla M. · Diego R.", division: "Open", gender: "H / M", paid: true },
+      { id: 2, name: "Marea Alta", emblem: "🌊", athletes: "Dani V. · Omar N.", division: "Community", gender: "H / M", paid: false },
+      { id: 3, name: "Huasteca Fit", emblem: "⛰", athletes: "Lupita S. · Ana T.", division: "Community", gender: "M / M", paid: true },
+      { id: 4, name: "Fuerza Bruta", emblem: "💀", athletes: "Luis M. · Beto L.", division: "Open", gender: "H / H", paid: false },
+    ],
+    teamFilter: "Todos",
+    nextWodId: 2,
+  };
+
+  setWodField(field, value) { this.setState({ wodForm: { ...this.state.wodForm, [field]: value } }); }
+  submitWorkout(e) {
+    e.preventDefault();
+    const { wodForm, workouts, nextWodId } = this.state;
+    if (wodForm.id) {
+      this.setState({ workouts: workouts.map((w) => (w.id === wodForm.id ? { ...wodForm } : w)), wodForm: { ...EMPTY_WOD } });
+    } else {
+      this.setState({ workouts: [...workouts, { ...wodForm, id: nextWodId }], wodForm: { ...EMPTY_WOD }, nextWodId: nextWodId + 1 });
+    }
+  }
+  cancelWodEdit() { this.setState({ wodForm: { ...EMPTY_WOD } }); }
+  toggleWodPublish(w) { this.setState({ workouts: this.state.workouts.map((x) => (x.id === w.id ? { ...x, isPublished: !x.isPublished } : x)) }); }
+  editWod(w) { this.setState({ wodForm: { ...w } }); }
+  removeWod(w) { this.setState({ workouts: this.state.workouts.filter((x) => x.id !== w.id) }); }
+
+  togglePaid(tm) {
+    this.setState({ teams: this.state.teams.map((x) => (x.id === tm.id ? { ...x, paid: !x.paid } : x)) });
+  }
+
+  renderVals() {
+    const { workouts, wodForm, teams, teamFilter } = this.state;
+    const filtered = teams.filter((tm) =>
+      teamFilter === "Todos" ? true : teamFilter === "Pendientes" ? !tm.paid : tm.division === teamFilter);
+    return {
+      wodTitle: wodForm.title, setWodTitle: (e) => this.setWodField("title", e.target.value),
+      wodSubtitle: wodForm.subtitle, setWodSubtitle: (e) => this.setWodField("subtitle", e.target.value),
+      wodContent: wodForm.content, setWodContent: (e) => this.setWodField("content", e.target.value),
+      wodPublished: wodForm.isPublished, toggleWodPublished: (e) => this.setWodField("isPublished", e.target.checked),
+      wodSubmitLabel: wodForm.id ? "Guardar cambios" : "Crear workout",
+      wodEditingExisting: !!wodForm.id,
+      submitWorkout: (e) => this.submitWorkout(e),
+      cancelWodEdit: () => this.cancelWodEdit(),
+      noWorkouts: workouts.length === 0,
+      workouts: workouts.map((w) => ({
+        title: w.title,
+        statusLabel: w.isPublished ? "Publicado en la landing" : "Borrador",
+        iconColor: w.isPublished ? "#f45a0b" : "rgba(255,255,255,.3)",
+        toggleLabel: w.isPublished ? "Despublicar" : "Publicar",
+        togglePublish: () => this.toggleWodPublish(w),
+        edit: () => this.editWod(w),
+        remove: () => this.removeWod(w),
+      })),
+
+      teamsCount: this.state.teams.length + (this.state.teams.length === 1 ? " equipo" : " equipos"),
+      teamStats: [
+        { label: "Equipos", value: String(this.state.teams.length), color: "#fff" },
+        { label: "Atletas", value: String(this.state.teams.length * 2), color: "#fff" },
+        { label: "Pagados", value: String(this.state.teams.filter((x) => x.paid).length), color: "#4ade80" },
+        { label: "Pendientes", value: String(this.state.teams.filter((x) => !x.paid).length), color: "#f45a0b" },
+      ],
+      teamFilters: ["Todos", "Community", "Open", "Pendientes"].map((f) => ({
+        label: f,
+        onClick: () => this.setState({ teamFilter: f }),
+        border: this.state.teamFilter === f ? "#f45a0b" : "rgba(255,255,255,.16)",
+        bg: this.state.teamFilter === f ? "rgba(244,90,11,.14)" : "transparent",
+        color: this.state.teamFilter === f ? "#fff" : "rgba(255,255,255,.6)",
+      })),
+      teams: filtered.map((tm) => ({
+        emblem: tm.emblem, name: tm.name, athletes: tm.athletes,
+        division: tm.division, gender: tm.gender,
+        border: tm.paid ? "rgba(74,222,128,.3)" : "rgba(244,90,11,.35)",
+        payLabel: tm.paid ? "✓ Pagado" : "Pendiente",
+        payBorder: tm.paid ? "rgba(74,222,128,.4)" : "rgba(244,90,11,.45)",
+        payBg: tm.paid ? "rgba(74,222,128,.12)" : "rgba(244,90,11,.12)",
+        payColor: tm.paid ? "#4ade80" : "#f45a0b",
+        toggle: () => this.togglePaid(tm),
+      })),
+      noTeams: filtered.length === 0,
+    };
+  }
+}
+</script>
+</body>
+</html>

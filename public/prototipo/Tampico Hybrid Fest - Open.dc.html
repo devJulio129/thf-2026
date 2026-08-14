@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; -webkit-font-smoothing: antialiased; }
+::selection { background: #f45a0b; color: #000; }
+a { color: #f45a0b; text-decoration: none; }
+.thf-wordmark { font-family: 'Russo One','Inter',system-ui,sans-serif; font-style: italic; }
+.thf-card { border-radius: 16px; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.02); transition: border-color .2s; }
+.thf-card:hover { border-color: rgba(244,90,11,.4); }
+</style>
+</helmet>
+
+<div style="font-family: 'Inter', system-ui, sans-serif; background: #080808; color: #f5f3ee; overflow-x: hidden;">
+  <header style="border-bottom: 1px solid rgba(255,255,255,.1); background: rgba(8,8,8,.8); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 40;">
+    <div style="max-width: 1200px; margin: 0 auto; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;">
+      <a href="./Tampico Hybrid Fest - Landing.dc.html" style="font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,.6);">← Inicio</a>
+      <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b;">Categoría · Open</div>
+      <a href="./Tampico Hybrid Fest - Community.dc.html" style="font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,.6);">← Community</a>
+    </div>
+  </header>
+
+  <section style="position: relative; padding: 96px 20px 80px; overflow: hidden;">
+    <div style="position: absolute; inset: 0; background-image: url('assets/p-row.jpg'); background-size: cover; background-position: 62% 44%; filter: saturate(.95); opacity: .8; transform: scale(1.08);"></div>
+    <div style="position: absolute; inset: 0; background: linear-gradient(100deg, rgba(8,8,8,.92) 10%, rgba(8,8,8,.58) 54%, rgba(8,8,8,.2) 100%);"></div>
+    <div style="position: absolute; top: -160px; right: -160px; width: 600px; height: 600px; border-radius: 50%; background: rgba(244,90,11,.2); filter: blur(60px); pointer-events: none;"></div>
+    <div style="position: absolute; bottom: -160px; left: -160px; width: 500px; height: 500px; border-radius: 50%; background: rgba(244,90,11,.1); filter: blur(60px); pointer-events: none;"></div>
+    <div style="position: relative; max-width: 1200px; margin: 0 auto;">
+      <div style="display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; border: 1px solid rgba(244,90,11,.4); background: rgba(244,90,11,.1); padding: 10px 16px; margin-bottom: 32px;">
+        <span style="color: #f45a0b;">🏆</span>
+        <span style="font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b;">Categoría élite · Por el podio</span>
+      </div>
+      <h1 class="thf-wordmark" style="font-size: clamp(3.5rem,10vw,9rem); text-transform: uppercase; line-height: 0.85; margin: 0;">
+        <span style="color: #f45a0b;">Open.</span><br>Dos días.
+      </h1>
+      <p style="margin-top: 32px; max-width: 60ch; font-size: 18px; line-height: 1.7; color: rgba(255,255,255,.7);">
+        La experiencia completa, en pareja. <span style="color:#fff;">Sábado 14: Hybrid Race con cargas Open.</span> <span style="color:#fff;">Domingo 15: Zone Challenge de 100 minutos.</span> Aquí se decide la pareja más completa del THF 2026 y el título The Fittest.
+      </p>
+      <div style="margin-top: 40px; display: flex; flex-wrap: wrap; gap: 12px;">
+        <a href="./Tampico Hybrid Fest - Login.dc.html" style="border-radius: 999px; background: #f45a0b; color: #000; padding: 16px 28px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Competir en Open →</a>
+        <a href="./Tampico Hybrid Fest - Quiz.dc.html" style="border-radius: 999px; border: 1px solid rgba(255,255,255,.2); color: #fff; padding: 16px 28px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">✦ Repetir quiz</a>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 0 20px 80px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px;">
+      <sc-for list="{{ facts }}" as="f" hint-placeholder-count="3">
+        <div class="thf-card" style="padding: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 8px;"><span style="color:#f45a0b;">{{ f.icon }}</span> {{ f.label }}</div>
+          <div class="thf-wordmark" style="font-size: 20px; text-transform: uppercase;">{{ f.value }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="padding: 80px 20px; border-top: 1px solid rgba(255,255,255,.05);">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <p style="font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b; margin: 0 0 16px;">El formato</p>
+      <h2 class="thf-wordmark" style="font-size: clamp(2.2rem,4vw,3rem); text-transform: uppercase; line-height: 0.95; margin: 0 0 48px; max-width: 24ch;">Dos jornadas. Una sola corona.</h2>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px;">
+        <sc-for list="{{ days }}" as="d" hint-placeholder-count="2">
+          <div style="position: relative; overflow: hidden; border-radius: 24px; border: 1px solid rgba(244,90,11,.2); background: linear-gradient(135deg, rgba(244,90,11,.05), rgba(255,255,255,.02), transparent); padding: 32px;">
+            <div style="font-size: 10px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b; margin-bottom: 12px;">{{ d.tag }}</div>
+            <div class="thf-wordmark" style="font-size: clamp(1.6rem,3vw,2rem); text-transform: uppercase; margin-bottom: 16px;">{{ d.title }}</div>
+            <p style="font-size: 15px; color: rgba(255,255,255,.65); line-height: 1.6; margin: 0 0 24px;">{{ d.desc }}</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <sc-for list="{{ d.bullets }}" as="b" hint-placeholder-count="3">
+                <span style="display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.3); padding: 6px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,.8);"><span style="color:#f45a0b;">⚡</span> {{ b }}</span>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 80px 20px; border-top: 1px solid rgba(255,255,255,.05);">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <p style="font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b; margin: 0 0 16px;">La carrera · sábado 14</p>
+      <h2 class="thf-wordmark" style="font-size: clamp(2.2rem,4vw,3rem); text-transform: uppercase; line-height: 0.95; margin: 0 0 48px; max-width: 24ch;">9 estaciones. Cargas Open.</h2>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px;">
+        <sc-for list="{{ stations }}" as="s" hint-placeholder-count="9">
+          <div class="thf-card" style="padding: 24px;">
+            <div class="thf-wordmark" style="font-size: 28px; color: #f45a0b; margin-bottom: 8px;">{{ s.n }}</div>
+            <div class="thf-wordmark" style="font-size: 18px; text-transform: uppercase; margin-bottom: 8px;">{{ s.title }}</div>
+            <p style="font-size: 14px; color: rgba(255,255,255,.6); line-height: 1.6; margin: 0;">{{ s.desc }}</p>
+          </div>
+        </sc-for>
+      </div>
+      <p style="margin-top: 32px; font-size: 12px; color: rgba(255,255,255,.4); max-width: 60ch;">* La ruta es la misma que Community; Open sube volumen y carga en las estaciones marcadas. Movimientos exactos y orden se anuncian la semana del evento.</p>
+    </div>
+  </section>
+
+  <section style="padding: 80px 20px; border-top: 1px solid rgba(255,255,255,.05);">
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: minmax(0,0.4fr) minmax(0,0.6fr); gap: 48px;">
+      <div>
+        <p style="font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b; margin: 0 0 16px;">Qué incluye</p>
+        <h2 class="thf-wordmark" style="font-size: clamp(2.2rem,4vw,3rem); text-transform: uppercase; line-height: 0.95; margin: 0;">Experiencia <span style="color:#f45a0b;">premium.</span></h2>
+        <p style="margin-top: 24px; font-size: 15px; color: rgba(255,255,255,.6); line-height: 1.6; max-width: 40ch;">Open es para los que llegan a competir en serio. Cada detalle está pensado para que el fin de semana sea inolvidable.</p>
+      </div>
+      <ul style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px;">
+        <sc-for list="{{ includes }}" as="it" hint-placeholder-count="8">
+          <li class="thf-card" style="display: flex; align-items: flex-start; gap: 12px; padding: 16px;">
+            <span style="width: 28px; height: 28px; border-radius: 50%; background: rgba(244,90,11,.1); border: 1px solid rgba(244,90,11,.3); display: flex; align-items: center; justify-content: center; color: #f45a0b; flex-shrink: 0; font-size: 13px;">✓</span>
+            <span style="font-size: 14px; color: rgba(255,255,255,.85); line-height: 1.5; padding-top: 4px;">{{ it }}</span>
+          </li>
+        </sc-for>
+      </ul>
+    </div>
+  </section>
+
+  <section style="padding: 96px 20px; border-top: 1px solid rgba(255,255,255,.05); text-align: center;">
+    <div style="max-width: 700px; margin: 0 auto;">
+      <div style="font-size: 28px; color: #f45a0b; margin-bottom: 24px;">🏋️</div>
+      <h2 class="thf-wordmark" style="font-size: clamp(2.5rem,6vw,4.5rem); text-transform: uppercase; line-height: 0.92; margin: 0;">¿Tienes lo<br><span style="color:#f45a0b;">que se necesita?</span></h2>
+      <p style="margin-top: 24px; font-size: 18px; color: rgba(255,255,255,.65);">Cupos muy limitados. La inscripción cierra cuando se llena el bracket.</p>
+      <div style="margin-top: 40px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;">
+        <a href="./Tampico Hybrid Fest - Login.dc.html" style="border-radius: 999px; background: #f45a0b; color: #000; padding: 16px 28px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">Inscribirme a Open →</a>
+        <a href="./Tampico Hybrid Fest - Community.dc.html" style="border-radius: 999px; border: 1px solid rgba(255,255,255,.2); color: #fff; padding: 16px 28px; font-size: 13px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">🔥 Ver Community</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      facts: [
+        { icon: "📅", label: "Días de competencia", value: "Sábado 14 & domingo 15" },
+        { icon: "📍", label: "Sede", value: "La Velaria · Recinto Ferial" },
+        { icon: "🎯", label: "Modalidad", value: "Parejas · por el ranking" },
+        { icon: "🎟", label: "Inscripción", value: "$2,300 MXN por pareja" },
+      ],
+      days: [
+        { tag: "Día 1", title: "Sábado · Hybrid Race", desc: "La misma ruta de nueve estaciones que Community, pero con cargas y volumen Open. Aquí se define el ranking del fin de semana.", bullets: ["Cargas Open", "Relevos libres", "Ranking general"] },
+        { tag: "Día 2", title: "Domingo · Zone Challenge", desc: "Cien minutos en seis zonas enlazadas, con heats cada 20 minutos y ventanas estrictas de trabajo y recuperación. Tres de las seis zonas suman puntos.", bullets: ["100 minutos", "6 zonas · 3 puntúan", "Heats cada 20 min"] },
+      ],
+      stations: [
+        { n: "01", title: "800 m run", desc: "Arranque en pista. El ritmo lo reparten entre los dos." },
+        { n: "02", title: "80 burpees over log", desc: "80 repeticiones, relevo libre entre los dos atletas." },
+        { n: "03", title: "800 m run", desc: "Segunda vuelta, ya con las piernas cargadas." },
+        { n: "04", title: "200 m walking lunges", desc: "200 metros de zancada cargando sandbag." },
+        { n: "05", title: "800 m run", desc: "Tercer bloque de carrera antes de la fuerza." },
+        { n: "06", title: "300 m farmer carry", desc: "300 metros con kettlebells de 54 lb." },
+        { n: "07", title: "800 m run", desc: "Última vuelta completa del recorrido." },
+        { n: "08", title: "1000 m row", desc: "Remo sostenido hasta completar los 1000 metros." },
+        { n: "09", title: "100 wall ball shots", desc: "100 repeticiones para cerrar y cruzar la meta." },
+      ],
+      includes: [
+        "Acceso a las dos jornadas: sábado 14 y domingo 15",
+        "Hybrid Race con cargas y volumen Open",
+        "Zone Challenge del domingo (100 min · 6 zonas)",
+        "Playera dry fit oficial para cada atleta",
+        "Medalla finisher y premiación a podio",
+        "Mochila deportiva del evento",
+        "Parche, pulseras y calcetas THF",
+        "Gafete de atleta con acceso a la sede",
+        "Puntos para el Ranking THF y el título The Fittest",
+        "Kit Founder Edition para las primeras 50 parejas",
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -6,12 +6,21 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "smoke": "node --env-file=.env.local scripts/smoke.mjs",
+    "smoke:session": "node --env-file=.env.local scripts/smoke-session.mjs",
+    "smoke:prices": "node --env-file=.env.local scripts/smoke-prices.mjs",
+    "smoke:leaderboard": "node --env-file=.env.local scripts/smoke-leaderboard.mjs",
+    "smoke:admin": "node --env-file=.env.local scripts/smoke-admin.mjs"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.4",
+    "@supabase/supabase-js": "^2.112.3",
+    "mercadopago": "^3.4.0",
     "next": "16.3.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

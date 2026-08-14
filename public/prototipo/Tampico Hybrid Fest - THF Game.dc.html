@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; -webkit-font-smoothing: antialiased; background: #0b1020; }
+::selection { background: #f45a0b; color: #000; }
+a { color: #ffd166; text-decoration: none; }
+.px { font-family: 'Press Start 2P', monospace; line-height: 1.6; }
+.btn { font-family: inherit; cursor: pointer; border: none; user-select: none; -webkit-tap-highlight-color: transparent; transition: transform .1s ease; }
+.btn:active { transform: translateY(3px); }
+canvas { display: block; margin: 0 auto; width: 100%; max-width: min(100%, calc(min(40vh, 320px) * 1.565)); height: auto; aspect-ratio: 288 / 184; image-rendering: pixelated; image-rendering: crisp-edges; }
+</style>
+</helmet>
+
+<div style="font-family: 'Inter', system-ui, sans-serif; background: #0b1020; color: #eaf1ff; min-height: 100vh;">
+  <header style="border-bottom: 2px solid #1b2a4a; background: #0d1428; position: sticky; top: 0; z-index: 40;">
+    <div style="max-width: 1000px; margin: 0 auto; min-height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; flex-wrap: wrap;">
+      <a class="px" href="./Tampico Hybrid Fest - Landing.dc.html" style="font-size: 9px; color: #7f9cd0;">◄ Inicio</a>
+      <a class="px" href="./Tampico Hybrid Fest - Leaderboard.dc.html" style="font-size: 9px; color: #7f9cd0;">Leaderboard</a>
+      <a class="px" href="./Tampico Hybrid Fest - Login.dc.html" style="font-size: 9px; color: #7f9cd0;">Inscribirme ►</a>
+    </div>
+  </header>
+
+  <main style="max-width: 1000px; margin: 0 auto; padding: 24px 16px 64px;">
+    <h1 class="px" style="font-size: clamp(18px,4.4vw,34px); color: #ffd166; text-shadow: 0 4px 0 #a2410a; margin: 0 0 4px;">THF GAME</h1>
+    <div class="px" style="font-size: 8px; color: #7f9cd0;">La Velaria · vista aérea</div>
+
+    <div style="margin-top: 16px; border: 3px solid #1b2a4a; border-radius: 6px; overflow: hidden; background: #0d1428;">
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; padding: 10px 14px; border-bottom: 3px solid #1b2a4a;">
+        <div class="px" style="font-size: 9px; color: #ffd166;">EST {{ stationNumber }}/{{ stationTotal }} · {{ stationName }}</div>
+        <div class="px" style="font-size: 9px; color: #8ef0a3;">{{ progressLabel }}</div>
+        <div class="px" style="font-size: 9px; color: #eaf1ff;">⏱ {{ clock }}</div>
+      </div>
+
+      <div style="position: relative; display: flex; justify-content: center; background: #0d1428;">
+        <canvas width="288" height="184" ref="{{ canvasRef }}"></canvas>
+
+        <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}">
+          <div style="position: absolute; inset: 0; background: rgba(6,10,22,.72); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; padding: 20px;">
+            <div class="px" style="font-size: clamp(12px,3vw,18px); color: #ffd166;">THF GAME</div>
+            <button type="button" onClick="{{ startGame }}" class="btn px" style="background: #f45a0b; color: #12182b; border-radius: 4px; padding: 16px 22px; font-size: 10px; box-shadow: 0 5px 0 #a2410a;">► JUGAR</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+          <div style="position: absolute; inset: 0; background: rgba(6,10,22,.86); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 20px;">
+            <div class="px" style="font-size: 10px; color: #8ef0a3;">META CRUZADA</div>
+            <div class="px" style="font-size: clamp(16px,4vw,26px); color: #ffd166;">{{ clock }}</div>
+            <div class="px" style="font-size: 8px; color: #7f9cd0;">Combo máximo {{ bestCombo }}</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 6px;">
+              <input class="px" value="{{ playerName }}" onInput="{{ setPlayerName }}" placeholder="TU NOMBRE" style="font-size: 9px; padding: 12px; width: 190px; background: #0f1830; color: #eaf1ff; border: 2px solid #1b2a4a; border-radius: 4px; outline: none;" />
+              <button type="button" onClick="{{ saveScore }}" class="btn px" style="background: #ffd166; color: #12182b; border-radius: 4px; padding: 12px 16px; font-size: 9px; box-shadow: 0 4px 0 #a2410a;">{{ saveLabel }}</button>
+              <button type="button" onClick="{{ startGame }}" class="btn px" style="background: #1b2a4a; color: #eaf1ff; border-radius: 4px; padding: 12px 16px; font-size: 9px; box-shadow: 0 4px 0 #0b1020;">REINTENTAR</button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="padding: 14px; border-top: 3px solid #1b2a4a;">
+        <div>
+          <div class="px" style="font-size: 7px; color: #7f9cd0;">{{ meterLabel }}</div>
+          <div style="margin-top: 6px; height: 14px; border: 2px solid #1b2a4a; background: #0b1020; overflow: hidden;">
+            <div style="height: 100%; width: {{ meterPct }}%; background: {{ meterColor }};"></div>
+          </div>
+        </div>
+
+        <sc-if value="{{ isRhythm }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <div style="position: relative; width: 108px; height: 108px; display: grid; place-items: center;">
+              <div style="position: absolute; width: 56px; height: 56px; border: 3px solid #ffd166; border-radius: 50%;"></div>
+              <div style="position: absolute; width: {{ beatSize }}px; height: {{ beatSize }}px; border: 3px solid {{ beatColor }}; border-radius: 50%;"></div>
+            </div>
+            <div>
+              <div class="px" style="font-size: 9px; color: #eaf1ff;">{{ patternLabel }}</div>
+              <div class="px" style="margin-top: 8px; font-size: 8px; color: #ffd166;">{{ tempoLabel }}</div>
+              <div class="px" style="margin-top: 8px; font-size: 8px; color: #8ef0a3;">Combo {{ combo }}</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <button type="button" onClick="{{ press }}" class="btn px" style="margin-top: 14px; width: 100%; background: #f45a0b; color: #12182b; border-radius: 6px; padding: 24px 16px; font-size: 12px; box-shadow: 0 6px 0 #a2410a;">{{ actionLabel }}</button>
+        <div class="px" style="margin-top: 10px; font-size: 7px; color: #7f9cd0; text-align: center;">{{ hint }}</div>
+
+        <div style="margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;">
+          <sc-for list="{{ chips }}" as="c" hint-placeholder-count="8">
+            <span class="px" style="font-size: 7px; padding: 6px 8px; border: 2px solid {{ c.border }}; color: {{ c.color }}; background: {{ c.bg }}; border-radius: 3px;">{{ c.label }}</span>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px;">
+      <div class="px" style="font-size: 10px; color: #ffd166;">TOP 8 · ESTE DISPOSITIVO</div>
+      <div style="margin-top: 12px; display: grid; gap: 6px;">
+        <sc-if value="{{ noScores }}" hint-placeholder-val="{{ true }}">
+          <div class="px" style="border: 2px dashed #1b2a4a; border-radius: 4px; padding: 20px; text-align: center; font-size: 8px; color: #7f9cd0;">Nadie ha cruzado la meta todavía</div>
+        </sc-if>
+        <sc-for list="{{ scores }}" as="s" hint-placeholder-count="4">
+          <div style="display: grid; grid-template-columns: 44px minmax(0,1fr) 90px; gap: 10px; align-items: center; border: 2px solid #1b2a4a; border-radius: 4px; background: #0f1830; padding: 12px;">
+            <div class="px" style="font-size: 10px; color: {{ s.rankColor }};">{{ s.rank }}</div>
+            <div class="px" style="font-size: 9px;">{{ s.name }}</div>
+            <div class="px" style="font-size: 10px; text-align: right; color: #8ef0a3;">{{ s.time }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1000,&quot;height&quot;:900}}">
+// Lienzo real 288x184 = 52,992 px, dibujado en unidades lógicas de 192x123 (escala 1.5).
+const W = 192, H = 123, INK = "#1b1a22";
+const STATIONS = [
+  { name: "600 m run", kind: "run", target: 600, unit: "m" },
+  { name: "Burpees over log", kind: "beat", target: 20, unit: "reps", bpm: 56, ramp: 18, sub: 1, swing: 0, tol: 0.2, prop: "log", pattern: "1 golpe lento" },
+  { name: "400 m run", kind: "run", target: 400, unit: "m" },
+  { name: "Walking lunges", kind: "beat", target: 24, unit: "pasos", bpm: 74, ramp: 12, sub: 2, swing: 0.1, tol: 0.14, prop: "sandbag", pattern: "2 golpes con swing" },
+  { name: "Farmer carry", kind: "beat", target: 22, unit: "pasos", bpm: 102, ramp: 8, sub: 1, swing: 0, tol: 0.12, prop: "kb", pattern: "Paso rapido y parejo" },
+  { name: "400 m run", kind: "run", target: 400, unit: "m" },
+  { name: "1000 m row", kind: "beat", target: 20, unit: "jalones", bpm: 46, ramp: 22, sub: 1, swing: 0, tol: 0.24, prop: "rower", pattern: "Jalon largo" },
+  { name: "Wall ball shots", kind: "beat", target: 24, unit: "reps", bpm: 80, ramp: 16, sub: 2, swing: 0, tol: 0.13, prop: "ball", pattern: "2 golpes exactos" },
+];
+const KEY = "thf_game_scores";
+const fmt = (ms) => { const s = Math.max(0, Math.floor(ms / 1000)); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
+
+class Component extends DCLogic {
+  state = {
+    phase: "idle", index: 0, done: 0, taps: [], speed: 0, world: 0,
+    beat: 0, armed: [true, true], combo: 0, bestCombo: 0,
+    startedAt: 0, elapsed: 0, flash: "", flashColor: "#ffd166", flashUntil: 0,
+    playerName: "", saved: false, scores: [],
+  };
+
+  componentDidMount() {
+    try { this.setState({ scores: JSON.parse(localStorage.getItem(KEY) || "[]") }); } catch (e) {}
+    this._key = (e) => {
+      if (e.code === "Space" || e.key === "ArrowRight" || e.key === "Enter") {
+        e.preventDefault();
+        if (this.state.phase === "playing") this.press(); else this.startGame();
+      }
+    };
+    window.addEventListener("keydown", this._key);
+    this._last = performance.now(); this._t = 0;
+    this._loop = setInterval(() => this.tick(), 40);
+  }
+  componentWillUnmount() { window.removeEventListener("keydown", this._key); clearInterval(this._loop); }
+
+  st() { return STATIONS[this.state.index]; }
+  tempo() { const st = this.st(); return st.kind === "beat" ? st.bpm + st.ramp * (this.state.done / st.target) : 0; }
+  slots() { const st = this.st(); return st.sub === 2 ? [0, 0.5 + (st.swing || 0)] : [0]; }
+
+  // El aro se cierra hacia el PRÓXIMO golpe, sea el primero o el segundo del compás.
+  nextSlot() {
+    const slots = this.slots();
+    const beat = this.state.beat;
+    let bestI = 0, bestD = 9;
+    slots.forEach((slot, i) => {
+      const d = (slot - beat + 1) % 1;
+      if (d < bestD) { bestD = d; bestI = i; }
+    });
+    const prev = slots.length > 1 ? slots[(bestI + slots.length - 1) % slots.length] : slots[bestI];
+    let interval = (slots[bestI] - prev + 1) % 1;
+    if (!interval) interval = 1;
+    return { index: bestI, delta: bestD, interval };
+  }
+  cueFrac() {
+    if (this.st().kind !== "beat") return 0;
+    const { delta, interval } = this.nextSlot();
+    return Math.max(0, Math.min(1, 1 - delta / interval));
+  }
+  nextSlotArmed() {
+    if (this.st().kind !== "beat") return true;
+    return !!this.state.armed[this.nextSlot().index];
+  }
+
+  tick() {
+    const now = performance.now();
+    const dt = Math.min(120, now - (this._last || now)) / 1000;
+    this._last = now; this._t += dt;
+
+    if (this.state.phase === "playing") {
+      const st = this.st();
+      const patch = { elapsed: Date.now() - this.state.startedAt };
+      if (st.kind === "run") {
+        const taps = this.state.taps.filter((t) => t > Date.now() - 1000);
+        const speed = Math.min(22, taps.length * 4.6);
+        const done = this.state.done + speed * dt;
+        patch.taps = taps; patch.speed = speed;
+        patch.world = this.state.world + speed * 2.4 * dt;
+        if (done >= st.target) { this.advance(patch); this.draw(); return; }
+        patch.done = done;
+      } else {
+        const slots = this.slots(), tol = st.tol;
+        const from = this.state.beat;
+        const raw = from + this.tempo() / 60 * dt;
+        const armed = [...this.state.armed];
+        let missed = false;
+        slots.forEach((slot, i) => {
+          [slot, slot + 1].forEach((sp) => {
+            if (from < sp - tol && raw >= sp - tol) armed[i] = true;                     // entra la ventana
+            if (from < sp + tol && raw >= sp + tol && armed[i]) { armed[i] = false; missed = true; } // salió sin golpe
+          });
+        });
+        const beat = raw >= 1 ? raw - 1 : raw;
+        patch.beat = beat; patch.armed = armed;
+        if (missed) { patch.combo = 0; patch.flash = "TARDE"; patch.flashColor = "#ff8fa3"; patch.flashUntil = Date.now() + 400; }
+      }
+      this.setState(patch);
+    }
+    this.draw();
+  }
+
+  advance(patch) {
+    const next = this.state.index + 1;
+    if (next >= STATIONS.length) {
+      this.setState({ ...patch, phase: "done", elapsed: Date.now() - this.state.startedAt, done: 0 });
+      return;
+    }
+    this.setState({ ...patch, index: next, done: 0, beat: 0.9, armed: [true, true], taps: [], speed: 0,
+      flash: "ESTACION LISTA", flashColor: "#8ef0a3", flashUntil: Date.now() + 700 });
+  }
+
+  press() {
+    if (this.state.phase !== "playing") return this.startGame();
+    const st = this.st();
+    if (st.kind === "run") { this.setState({ taps: [...this.state.taps, Date.now()] }); return; }
+    const slots = this.slots(), beat = this.state.beat;
+    let best = -1, bestD = 9;
+    slots.forEach((slot, i) => {
+      const d = Math.min(Math.abs(beat - slot), Math.abs(beat - slot - 1), Math.abs(beat - slot + 1));
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    const armed = [...this.state.armed];
+    if (bestD >= st.tol || !armed[best]) {
+      this.setState({ combo: 0, flash: bestD >= st.tol ? "FUERA DE RITMO" : "MUY PRONTO", flashColor: "#ff8fa3", flashUntil: Date.now() + 360 });
+      return;
+    }
+    armed[best] = false;
+    const perfect = bestD < st.tol * 0.45;
+    const combo = this.state.combo + 1;
+    const done = this.state.done + (perfect ? 1 : 0.75);
+    const patch = { armed, combo, bestCombo: Math.max(this.state.bestCombo, combo),
+      flash: perfect ? "PERFECTO" : "BIEN", flashColor: perfect ? "#ffd166" : "#8ef0a3", flashUntil: Date.now() + 320 };
+    if (done >= st.target) return this.advance(patch);
+    this.setState({ ...patch, done });
+  }
+
+  startGame() {
+    const now = Date.now();
+    this.setState({ phase: "playing", index: 0, done: 0, taps: [], speed: 0, world: 0,
+      beat: 0.9, armed: [true, true], combo: 0, bestCombo: 0, startedAt: now, elapsed: 0, saved: false, flashUntil: 0 });
+  }
+
+  saveScore() {
+    if (this.state.saved) return;
+    const entry = { name: (this.state.playerName || "PAREJA THF").slice(0, 18).toUpperCase(), ms: this.state.elapsed };
+    const scores = [...this.state.scores, entry].sort((a, b) => a.ms - b.ms).slice(0, 8);
+    try { localStorage.setItem(KEY, JSON.stringify(scores)); } catch (e) {}
+    this.setState({ scores, saved: true });
+  }
+
+  r(x, y, w, h, color) { const c = this._ctx; c.fillStyle = color; c.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); }
+
+  ground(off) {
+    this.r(0, 0, W, H, "#63c06a");
+    const o8 = off % 8;
+    for (let y = 0; y < H; y += 8) {
+      const isGrass = y < 24 || y >= 96;
+      const base = isGrass ? "#63c06a" : "#e0cfa8";
+      const alt = isGrass ? "#57b45f" : "#d3bf94";
+      this.r(0, y, W, 8, base);
+      for (let x = -8; x < W + 8; x += 16) this.r(x - o8, y, 8, 8, alt);
+    }
+    this.r(0, 46, W, 46, "#c9743a");
+    this.r(0, 46, W, 2, INK);
+    this.r(0, 90, W, 2, INK);
+    for (let x = -16; x < W + 16; x += 16) this.r(x - (off % 16), 68, 8, 2, "#f2e6cf");
+  }
+
+  velaria(off) {
+    const c = this._ctx;
+    const px = -((off * 0.35) % 128);
+    for (let k = 0; k < 3; k++) {
+      const bx = Math.round(px + k * 128);
+      c.fillStyle = "#f7f7fb";
+      c.beginPath(); c.moveTo(bx + 4, 30); c.lineTo(bx + 32, 4); c.lineTo(bx + 60, 30); c.closePath(); c.fill();
+      c.beginPath(); c.moveTo(bx + 48, 30); c.lineTo(bx + 82, 10); c.lineTo(bx + 116, 30); c.closePath(); c.fill();
+      c.fillStyle = "#c3cee4";
+      c.beginPath(); c.moveTo(bx + 32, 4); c.lineTo(bx + 60, 30); c.lineTo(bx + 44, 30); c.closePath(); c.fill();
+      c.beginPath(); c.moveTo(bx + 82, 10); c.lineTo(bx + 116, 30); c.lineTo(bx + 98, 30); c.closePath(); c.fill();
+      this.r(bx + 31, 4, 2, 27, "#8f9cb5");
+      this.r(bx + 81, 10, 2, 21, "#8f9cb5");
+      this.r(bx + 2, 30, 118, 2, INK);
+      for (let i = 0; i < 15; i++) {
+        const bob = Math.sin(this._t * 5 + i + k) > 0 ? 0 : 1;
+        this.r(bx + 4 + i * 8, 33 + bob, 5, 6, ["#e05a4a", "#f0c04a", "#4a8fd0", "#9b6bd0", "#57b45f"][i % 5]);
+      }
+      this.r(bx + 2, 39, 118, 2, INK);
+    }
+    this.r(0, 41, W, 3, "#b9a479");
+  }
+
+  hero(x, y, pose, phase) {
+    const kit = "#f45a0b", skin = "#f7c9a0", pants = "#2b3550", shoe = "#f2e6cf";
+    const s = Math.sin(phase * Math.PI * 2);
+    if (pose === "down") {
+      // burpee al piso: silueta tumbada con contorno propio y cabeza/gorra visibles
+      this.r(x - 5, y + 8, 22, 9, INK);
+      this.r(x - 4, y + 9, 20, 7, kit);
+      this.r(x - 4, y + 13, 20, 3, "#c1450a");
+      this.r(x + 15, y + 6, 8, 8, INK);
+      this.r(x + 16, y + 7, 6, 6, skin);
+      this.r(x + 16, y + 6, 6, 2, kit);
+      this.r(x - 8, y + 10, 4, 3, skin);
+      return;
+    }
+    const lift = pose === "squat" ? 4 : 0;
+    const sw = pose === "run" ? Math.round(s * 3) : pose === "lunge" ? Math.round(Math.max(0, s) * 4) : 0;
+    this.r(x, y + 17, 12, 2, "#b9a479");
+    this.r(x + 2, y + 10 + lift, 3, Math.max(2, 7 - lift + sw), pants);
+    this.r(x + 7, y + 10 + lift, 3, Math.max(2, 7 - lift - sw), pants);
+    this.r(x + 2, y + 15, 3, 2, shoe);
+    this.r(x + 7, y + 15, 3, 2, shoe);
+    this.r(x + 1, y + 4 + lift, 10, 7, kit);
+    this.r(x + 1, y + 10 + lift, 10, 1, "#c1450a");
+    this.r(x - 1, y + 5 + lift, 2, 5, skin);
+    this.r(x + 11, y + 5 + lift, 2, 5, skin);
+    this.r(x + 2, y - 2 + lift, 8, 6, skin);
+    this.r(x + 1, y - 5 + lift, 10, 3, kit);
+    this.r(x + 1, y - 2 + lift, 10, 1, INK);
+    this.r(x + 3, y + 1 + lift, 1, 1, INK);
+    this.r(x + 8, y + 1 + lift, 1, 1, INK);
+  }
+
+  // El atleta se dibuja al DOBLE de escala y en su propia franja del tapete; el equipo
+  // va en columnas laterales, nunca en las mismas filas que el sprite.
+  station(st, beat) {
+    const c = this._ctx;
+    const padX = 22, padY = 50, padW = 148, padH = 44;
+    // piso de concreto gris: avisa que llegaste a la estación
+    this.r(padX, padY, padW, padH, "#b9bec7");
+    for (let y = padY + 4; y < padY + padH - 2; y += 8) {
+      for (let x = padX + 4; x < padX + padW - 4; x += 16) this.r(x, y, 8, 4, "#a7adb8");
+    }
+    this.r(padX, padY, padW, 2, INK);
+    this.r(padX, padY + padH - 2, padW, 2, INK);
+    this.r(padX, padY + 6, padW, 1, "#cfd4dc");
+
+    const s = Math.sin(beat * Math.PI * 2);
+    // el atleta se desplaza sobre el piso gris en carry y desplantes
+    const walk = (st.prop === "kb" || st.prop === "sandbag")
+      ? Math.round(((this.state.done / st.target) * (padW - 60)))
+      : 0;
+    const heroX = padX + 18 + walk, heroY = padY + 10;
+
+    // — burpees: el atleta cruza el tronco de un salto —
+    if (st.prop === "log") {
+      const logX = padX + 70, logW = 26;
+      // el atleta cae fuera de las columnas del tronco y lo cruza por arriba en arco
+      const airborne = s > 0.2;
+      const arc = airborne ? Math.sin(((s - 0.2) / 0.8) * Math.PI) : 0;
+      const hop = Math.round(arc * 26);
+      const side = Math.floor(beat * 2) % 2 === 0 ? -1 : 1;
+      const groundX = side < 0 ? logX - 50 : logX + logW + 8;
+      const hx = airborne ? logX - 12 : groundX;
+      c.save(); c.translate(hx, padY + 8 - hop); c.scale(2, 2);
+      this.hero(0, 0, airborne ? "run" : "down", beat * 2);
+      c.restore();
+      // el tronco se dibuja AL FINAL: el atleta pasa por encima, nunca lo tapa
+      this.r(logX, padY + 26, logW, 9, "#8b5a2b");
+      this.r(logX, padY + 26, logW, 3, "#a9713a");
+      this.r(logX, padY + 33, logW, 2, "#6f4520");
+      this.r(logX, padY + 35, logW, 1, INK);
+      return;
+    }
+
+    // — remadora con más detalle (riel, volante, cadena, asiento) —
+    if (st.prop === "rower") {
+      const rx = padX + 34, ry = padY + 12;
+      this.r(rx + 4, ry + 22, 74, 5, "#8d949f");           // riel
+      this.r(rx + 4, ry + 27, 74, 2, INK);
+      this.r(rx + 62, ry + 6, 22, 22, "#2f7fbf");          // carcasa del volante
+      this.r(rx + 64, ry + 8, 18, 18, "#4a9be0");
+      this.r(rx + 68, ry + 12, 10, 10, "#1b3f66");
+      this.r(rx + 62, ry + 6, 22, 2, INK);
+      this.r(rx + 62, ry + 26, 22, 2, INK);
+      this.r(rx, ry + 16, 8, 12, "#8d949f");               // reposapiés
+      this.r(rx, ry + 16, 8, 2, INK);
+      const pull = Math.round(Math.max(0, s) * 12);
+      const seatX = rx + 22 + (12 - pull);
+      this.r(seatX, ry + 18, 12, 5, "#3d4553");            // asiento deslizando
+      c.save(); c.translate(seatX - 6, ry - 2); c.scale(2, 2);
+      this.hero(0, 0, "squat", beat);
+      c.restore();
+      this.r(seatX + 16, ry + 13, 46 - (12 - pull), 2, "#1b2a4a");  // cadena
+      this.r(seatX + 14, ry + 10, 3, 8, "#e0be3c");                 // mango
+      return;
+    }
+
+    // — resto: equipo fuera de las filas del sprite —
+    if (st.prop === "kb") {
+      this.r(padX + 6, padY + 30, 8, 8, "#4a5568");
+      this.r(padX + padW - 14, padY + 30, 8, 8, "#4a5568");
+    } else if (st.prop === "ball") {
+      this.r(padX + 96, padY - 26, 22, 22, "#c0392b");
+      this.r(padX + 96, padY - 26, 22, 2, INK);
+      this.r(padX + 96, padY - 6, 22, 2, INK);
+    }
+
+    c.save();
+    c.translate(heroX, heroY);
+    c.scale(2, 2);
+    const pose = st.prop === "sandbag" ? "lunge" : st.prop === "kb" ? "run" : (s > 0.4 ? "squat" : "run");
+    const phase = st.prop === "kb" ? beat * 1.6 : beat;
+    this.hero(0, 0, pose, phase);
+    c.restore();
+
+    if (st.prop === "kb") {
+      this.r(heroX - 8, heroY + 20, 6, 11, "#4a5568");
+      this.r(heroX + 26, heroY + 20, 6, 11, "#4a5568");
+    } else if (st.prop === "sandbag") {
+      this.r(heroX + 4, heroY - 5, 16, 7, "#c9a227");
+      this.r(heroX + 4, heroY - 5, 16, 2, "#e0be3c");
+    } else {
+      const up = Math.round(Math.max(0, s) * 28);
+      this.r(heroX + 26, heroY + 6 - up, 9, 9, "#1f6f4a");
+      this.r(heroX + 26, heroY + 6 - up, 9, 2, "#2f8f5f");
+    }
+  }
+
+  draw() {
+    const cv = this._cv;
+    if (!cv) return;
+    if (!this._ctx) this._ctx = cv.getContext("2d");
+    const c = this._ctx, s = this.state, st = this.st();
+    const isRun = st.kind === "run";
+    c.setTransform(1.5, 0, 0, 1.5, 0, 0);
+    c.clearRect(0, 0, W, H);
+    this.ground(s.world);
+    this.velaria(s.world);
+
+    if (isRun) {
+      for (let i = 0; i < 7; i++) {
+        const x = ((i * 32 - s.world * 1.6) % 224 + 224) % 224 - 20;
+        this.r(x, 50, 3, 5, "#f0c04a");
+        this.r(x, 84, 3, 5, "#f0c04a");
+      }
+      const bob = Math.sin(this._t * (6 + s.speed / 3)) > 0 ? 0 : 1;
+      this.hero(88, 62 + bob, "run", this._t * (2 + s.speed / 5));
+    } else {
+      this.station(st, s.beat);
+    }
+
+    if (Date.now() < s.flashUntil) {
+      c.fillStyle = s.flashColor;
+      c.font = "8px 'Press Start 2P', monospace";
+      c.textAlign = "center";
+      c.fillText(s.flash, W / 2, 26);
+      c.textAlign = "left";
+    }
+  }
+
+  renderVals() {
+    const s = this.state, st = this.st();
+    const isRun = st.kind === "run";
+    const pct = Math.min(100, Math.round((s.done / st.target) * 100));
+    return {
+      canvasRef: (el) => { this._cv = el; this._ctx = null; },
+      isIdle: s.phase === "idle",
+      isDone: s.phase === "done",
+      isRhythm: s.phase === "playing" && !isRun,
+      stationNumber: String(s.index + 1).padStart(2, "0"),
+      stationTotal: String(STATIONS.length).padStart(2, "0"),
+      stationName: st.name,
+      progressLabel: Math.floor(s.done) + "/" + st.target + " " + st.unit,
+      clock: fmt(s.elapsed),
+      meterLabel: isRun ? "Velocidad " + s.speed.toFixed(1) + " m/s" : "Avance de la estación",
+      meterPct: isRun ? Math.min(100, Math.round((s.speed / 22) * 100)) : pct,
+      meterColor: isRun ? "#ffd166" : "#8ef0a3",
+      beatSize: Math.round(96 - this.cueFrac() * 40),
+      beatColor: this.nextSlotArmed() ? "#f45a0b" : "#1b2a4a",
+      patternLabel: st.pattern || "",
+      tempoLabel: Math.round(this.tempo()) + " BPM",
+      combo: s.combo,
+      bestCombo: s.bestCombo,
+      actionLabel: s.phase !== "playing" ? "► JUGAR" : isRun ? "¡MACHACA!" : "AL RITMO",
+      hint: isRun ? "Aplana el botón lo más rápido que puedas (Espacio)" : "El círculo se cierra: presiona al llegar al aro amarillo (Espacio)",
+      press: () => this.press(),
+      startGame: () => this.startGame(),
+      chips: STATIONS.map((x, i) => ({
+        label: String(i + 1).padStart(2, "0"),
+        border: i < s.index ? "#8ef0a3" : i === s.index ? "#f45a0b" : "#1b2a4a",
+        bg: i === s.index ? "rgba(244,90,11,.18)" : "transparent",
+        color: i < s.index ? "#8ef0a3" : i === s.index ? "#ffd166" : "#7f9cd0",
+      })),
+      playerName: s.playerName,
+      setPlayerName: (e) => this.setState({ playerName: e.target.value }),
+      saveScore: () => this.saveScore(),
+      saveLabel: s.saved ? "GUARDADO ✓" : "GUARDAR",
+      noScores: s.scores.length === 0,
+      scores: s.scores.map((x, i) => ({
+        rank: String(i + 1).padStart(2, "0"),
+        rankColor: i === 0 ? "#ffd166" : "#7f9cd0",
+        name: x.name, time: fmt(x.ms),
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>

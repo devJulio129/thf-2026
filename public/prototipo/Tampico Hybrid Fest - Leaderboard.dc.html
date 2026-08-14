@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&amp;family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; -webkit-font-smoothing: antialiased; }
+::selection { background: #f45a0b; color: #000; }
+a { color: #f45a0b; text-decoration: none; }
+a:hover { color: #ff6a00; }
+.thf-wordmark { font-family: 'Russo One','Inter',system-ui,sans-serif; font-style: italic; }
+.thf-row { transition: background .2s, border-color .2s; }
+.thf-row:hover { background: rgba(255,255,255,.04); border-color: rgba(244,90,11,.45); }
+.thf-input { width: 100%; border-radius: 999px; border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.4); padding: 12px 18px; font-size: 14px; color: #fff; outline: none; font-family: inherit; }
+.thf-input:focus { border-color: #f45a0b; }
+.thf-tabs { display: flex; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; overflow: hidden; flex-shrink: 0; }
+.thf-tabs > * { padding: 10px 20px; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; }
+@media (max-width: 560px) {
+  .thf-tabs > * { padding: 9px 12px; font-size: 10px; letter-spacing: 0.08em; }
+}
+.thf-input::placeholder { color: rgba(255,255,255,.3); }
+</style>
+</helmet>
+
+<div style="font-family: 'Inter', system-ui, sans-serif; background: #080808; color: #f5f3ee; min-height: 100vh;">
+  <header style="border-bottom: 1px solid rgba(255,255,255,.1); background: rgba(8,8,8,.85); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 40;">
+    <div style="max-width: 1200px; margin: 0 auto; height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 20px;">
+      <a href="./Tampico Hybrid Fest - Landing.dc.html" style="font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,.6);">← Inicio</a>
+      <div class="thf-tabs">
+        <span style="background: #f45a0b; color: #000;">Leaderboard</span>
+        <a href="./Tampico Hybrid Fest - THF Game.dc.html" style="color: rgba(255,255,255,.6);">THF Game</a>
+      </div>
+      <a href="./Tampico Hybrid Fest - Login.dc.html" style="font-size: 12px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,.6);">Inscribirme →</a>
+    </div>
+  </header>
+
+  <section style="position: relative; overflow: hidden; padding: clamp(48px,7vw,96px) 20px 40px;">
+    <div style="position: absolute; inset: 0; background-image: url('assets/p-velaria-in.jpg'); background-size: cover; background-position: 50% 62%; filter: saturate(.85); opacity: .62; transform: scale(1.08);"></div>
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,8,8,.66), rgba(8,8,8,.95));"></div>
+    <div style="position: relative; max-width: 1200px; margin: 0 auto;">
+      <p style="font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #f45a0b; margin: 0 0 16px;">THF 2026</p>
+      <h1 class="thf-wordmark" style="font-size: clamp(3rem,7vw,6rem); text-transform: uppercase; line-height: 0.88; margin: 0; max-width: 20ch;">Leader<span style="color:#f45a0b;">board.</span></h1>
+      
+
+      <div style="margin-top: 40px; display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px;">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+          <div style="border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.02); border-radius: 16px; padding: 20px;">
+            <div style="font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,.4);">{{ s.label }}</div>
+            <div class="thf-wordmark" style="margin-top: 10px; font-size: 30px;">{{ s.value }}</div>
+            <div style="margin-top: 4px; font-size: 12px; color: {{ s.noteColor }};">{{ s.note }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 0 20px 96px;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;">
+        <div style="display: flex; border: 1px solid rgba(255,255,255,.16); border-radius: 999px; overflow: hidden;">
+          <sc-for list="{{ tabs }}" as="f" hint-placeholder-count="2">
+            <button type="button" onClick="{{ f.onClick }}" style="padding: 14px 34px; font-family: inherit; font-size: 12px; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; border: 0; cursor: pointer; background: {{ f.bg }}; color: {{ f.color }};">{{ f.label }}</button>
+          </sc-for>
+        </div>
+        <div style="min-width: 240px; flex: 1; max-width: 340px;">
+          <input class="thf-input" value="{{ query }}" onInput="{{ setQuery }}" placeholder="Buscar equipo, atleta o ciudad…">
+        </div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 24px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,.12);">
+        <div class="thf-wordmark" style="font-size: clamp(1.6rem,3vw,2.2rem); text-transform: uppercase;">{{ division }} <span style="color:#f45a0b;">· {{ divisionCount }} parejas</span></div>
+        <div style="font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,.45);">{{ divisionNote }}</div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 64px 88px minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,0.7fr) 150px; gap: 16px; padding: 18px 8px; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,.35);">
+        <div>#</div><div>Emblema</div><div>Equipo</div><div>Atletas</div><div>Ciudad</div><div>Registro</div>
+      </div>
+
+      <div style="display: grid; gap: 10px;">
+        <sc-for list="{{ teams }}" as="t" hint-placeholder-count="8">
+          <div class="thf-row" style="display: grid; grid-template-columns: 64px 88px minmax(0,1.1fr) minmax(0,1.2fr) minmax(0,0.7fr) 150px; gap: 16px; align-items: center; border: 1px solid rgba(255,255,255,.1); border-radius: 18px; background: rgba(255,255,255,.02); padding: 16px 8px 16px 16px;">
+            <div class="thf-wordmark" style="font-size: 22px; color: {{ t.rankColor }};">{{ t.rank }}</div>
+            <div style="width: 60px; height: 60px;">{{ t.emblem }}</div>
+            <div>
+              <div class="thf-wordmark" style="font-size: 20px; text-transform: uppercase; line-height: 1.05;">{{ t.name }}</div>
+              <div style="margin-top: 6px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: {{ t.phaseColor }};">{{ t.phase }}</div>
+            </div>
+            <div style="display: grid; gap: 6px; font-size: 14px; color: rgba(255,255,255,.82);">
+              <div><span style="color: #f45a0b; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-right: 8px;">A1</span>{{ t.athlete1 }}</div>
+              <div><span style="color: rgba(255,255,255,.35); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; margin-right: 8px;">A2</span>{{ t.athlete2 }}</div>
+            </div>
+            <div style="font-size: 13px; color: rgba(255,255,255,.55);">{{ t.city }}</div>
+            <div style="font-size: 12px; color: rgba(255,255,255,.5);">{{ t.registered }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="border: 1px dashed rgba(255,255,255,.18); border-radius: 18px; padding: 48px 24px; text-align: center; color: rgba(255,255,255,.5); font-size: 14px;">
+          Ninguna pareja coincide con esa búsqueda.
+        </div>
+      </sc-if>
+
+      <div style="margin-top: 40px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;">
+        <p style="font-size: 12px; color: rgba(255,255,255,.4); margin: 0; max-width: 60ch;">La lista se actualiza cuando el equipo THF valida datos y pago. Las primeras 50 parejas conservan el kit Founder Edition.</p>
+        <a href="./Tampico Hybrid Fest - Login.dc.html" style="display: inline-flex; align-items: center; gap: 10px; border-radius: 999px; background: #f45a0b; color: #000; padding: 16px 26px; font-size: 12px; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase;">Sumar a mi pareja →</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:900}}">
+const h = React.createElement;
+
+const PLATES = {
+  shield: "M50 6 L88 20 V52 C88 74 70 88 50 95 C30 88 12 74 12 52 V20 Z",
+  hex: "M50 5 L89 27 V73 L50 95 L11 73 V27 Z",
+  circle: "M50 5 A45 45 0 1 1 49.9 5 Z",
+  diamond: "M50 4 L95 50 L50 96 L5 50 Z",
+  octagon: "M34 6 H66 L94 34 V66 L66 94 H34 L6 66 V34 Z",
+  banner: "M14 8 H86 V78 L50 96 L14 78 Z",
+  arrow: "M50 4 L92 30 V70 L50 96 L8 70 V30 Z",
+  star: "M50 5 L62 38 L96 39 L69 59 L79 92 L50 73 L21 92 L31 59 L4 39 L38 38 Z",
+};
+const PATTERNS = {
+  none: [],
+  half: ["M50 0 H100 V100 H50 Z"],
+  bars: ["M0 18 H100 V30 H0 Z", "M0 44 H100 V56 H0 Z", "M0 70 H100 V82 H0 Z"],
+  diag: ["M-10 70 L70 -10 L100 20 L20 100 Z"],
+  chevron: ["M50 20 L92 62 L74 80 L50 56 L26 80 L8 62 Z"],
+  ring: ["M50 14 A36 36 0 1 1 49.9 14 Z M50 32 A18 18 0 1 0 50.1 32 Z"],
+  quad: ["M0 0 H50 V50 H0 Z", "M50 50 H100 V100 H50 Z"],
+};
+const ICONS = {
+  skull: "M50 12c-16 0-28 12-28 28 0 9 4 15 8 19v9c0 4 3 8 8 8h24c5 0 8-4 8-8v-9c4-4 8-10 8-19 0-16-12-28-28-28zm-11 26a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm22 0a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm-11 20 5 9h-10z",
+  bolt: "M56 8 24 56h18l-6 36 34-52H52z",
+  flame: "M50 8c8 16-6 22-6 34 0 8 6 12 6 12s-14 4-14 18 12 20 14 20c-24-2-30-18-30-32C20 36 44 30 50 8zm8 26c14 10 22 20 22 34 0 14-10 24-24 26 4-6 8-12 8-20 0-14-14-18-6-40z",
+  crown: "M12 34 28 52 50 20l22 32 16-18-8 44H20z",
+  kettle: "M50 14c-12 0-20 8-20 18 0 5 2 9 5 12-9 5-13 14-13 24 0 8 6 14 14 14h28c8 0 14-6 14-14 0-10-4-19-13-24 3-3 5-7 5-12 0-10-8-18-20-18zm0 10c6 0 10 4 10 9s-4 9-10 9-10-4-10-9 4-9 10-9z",
+  scorpion: "M30 34 20 22l-8 6 12 16-8 12 10 8 8-10 12 12v14l10 10 10-10-6-12 12-16-10-8-10 12-14-14z",
+  paw: "M32 30a8 9 0 1 1 0 18 8 9 0 0 1 0-18zm36 0a8 9 0 1 1 0 18 8 9 0 0 1 0-18zM50 22a8 9 0 1 1 0 18 8 9 0 0 1 0-18zM50 54c12 0 22 8 22 16s-10 10-22 10-22-2-22-10 10-16 22-16z",
+  anchor: "M46 14h8v14h12v10H54v34c12-2 20-10 22-22h10c-2 22-18 36-36 36S16 72 14 50h10c2 12 10 20 22 22V38H34V28h12z",
+  wave: "M10 40c10-12 22-12 32 0s22 12 32 0l14 14c-10 12-22 12-32 0s-22-12-32 0zm0 26c10-12 22-12 32 0s22 12 32 0l14 12c-10 12-22 12-32 0s-22-12-32 0z",
+  trident: "M46 12h8v20h10V20h10v22c0 8-6 14-14 16v34h-8V58c-8-2-14-8-14-16V20h10v12h-2z",
+  fist: "M28 38c0-8 6-14 14-14h20c8 0 14 6 14 14v6h4c4 0 6 4 6 8v12c0 12-10 22-22 22H44c-10 0-16-6-16-16zm12-2v10h8V36zm14 0v10h8V36z",
+  mountain: "M50 18 84 82H16zm0 22-14 26h28z",
+};
+
+const emblem = (e, key) => {
+  const plate = PLATES[e.plate] || PLATES.shield;
+  const cid = "lb-clip-" + key;
+  const scale = (e.scale || 68) / 100;
+  const off = 50 - 50 * scale;
+  return h("svg", { viewBox: "0 0 100 100", style: { display: "block", width: "100%", aspectRatio: "1 / 1", filter: "drop-shadow(0 4px 10px rgba(0,0,0,.5))" } }, [
+    h("defs", { key: "d" }, h("clipPath", { id: cid }, h("path", { d: plate }))),
+    h("path", { key: "p", d: plate, fill: e.colorPlate }),
+    h("g", { key: "pt", clipPath: "url(#" + cid + ")", transform: "rotate(" + (e.rotation || 0) + " 50 50)" },
+      (PATTERNS[e.pattern] || []).map((d, i) => h("path", { key: i, d, fill: e.colorPattern, fillRule: "evenodd" }))),
+    h("path", { key: "e", d: plate, fill: "none", stroke: "rgba(0,0,0,.45)", strokeWidth: 3 }),
+    h("g", { key: "ic", transform: "translate(" + off + " " + off + ") scale(" + scale + ")" },
+      h("path", { d: ICONS[e.icon] || ICONS.skull, fill: e.colorIcon, fillRule: "evenodd" })),
+  ]);
+};
+
+const TEAMS = [
+  { name: "Alacranes Tampico", a1: "Mauricio Rodríguez", a2: "Ana Lozano", city: "Tampico", division: "Open", date: "12 feb 2026",
+    e: { plate: "shield", pattern: "diag", icon: "scorpion", colorPlate: "#f45a0b", colorPattern: "#101010", colorIcon: "#f5f3ee" } },
+  { name: "Jaiba Brava Crew", a1: "Diego Cruz", a2: "Paulina Vega", city: "Madero", division: "Community", date: "12 feb 2026",
+    e: { plate: "hex", pattern: "bars", icon: "paw", colorPlate: "#0e7490", colorPattern: "#f5f3ee", colorIcon: "#facc15", scale: 62 } },
+  { name: "Marea Negra", a1: "Iván Salazar", a2: "Fernanda Ruiz", city: "Altamira", division: "Open", date: "13 feb 2026",
+    e: { plate: "circle", pattern: "ring", icon: "wave", colorPlate: "#101010", colorPattern: "#f45a0b", colorIcon: "#f5f3ee", rotation: 15 } },
+  { name: "Acero Norte", a1: "Rodrigo Peña", a2: "Karla Méndez", city: "Tampico", division: "Community", date: "13 feb 2026",
+    e: { plate: "octagon", pattern: "quad", icon: "kettle", colorPlate: "#4c1d95", colorPattern: "#f5f3ee", colorIcon: "#facc15", scale: 60 } },
+  { name: "Los del Puente", a1: "Héctor Ramos", a2: "Sofía Aguilar", city: "Ciudad Victoria", division: "Open", date: "14 feb 2026",
+    e: { plate: "banner", pattern: "half", icon: "trident", colorPlate: "#7f1d1d", colorPattern: "#101010", colorIcon: "#f5f3ee" } },
+  { name: "Panteras del Golfo", a1: "Luis Barrera", a2: "Mariana Tovar", city: "Madero", division: "Community", date: "14 feb 2026",
+    e: { plate: "diamond", pattern: "chevron", icon: "flame", colorPlate: "#065f46", colorPattern: "#facc15", colorIcon: "#f5f3ee", scale: 58 } },
+  { name: "Hierro & Sal", a1: "Emilio Cantú", a2: "Regina Flores", city: "Tampico", division: "Open", date: "15 feb 2026",
+    e: { plate: "arrow", pattern: "diag", icon: "anchor", colorPlate: "#f5f3ee", colorPattern: "#f45a0b", colorIcon: "#101010" } },
+  { name: "Cumbre 21", a1: "Alan Muñoz", a2: "Daniela Ortiz", city: "Altamira", division: "Community", date: "15 feb 2026",
+    e: { plate: "star", pattern: "none", icon: "mountain", colorPlate: "#1e3a8a", colorPattern: "#101010", colorIcon: "#f5f3ee", scale: 52 } },
+  { name: "Puño Cerrado", a1: "Bruno Iglesias", a2: "Ximena Salas", city: "Tampico", division: "Open", date: "16 feb 2026",
+    e: { plate: "shield", pattern: "chevron", icon: "fist", colorPlate: "#101010", colorPattern: "#f45a0b", colorIcon: "#f5f3ee", scale: 64 } },
+  { name: "Rayo Costero", a1: "Óscar Delgado", a2: "Valeria Nava", city: "Madero", division: "Community", date: "16 feb 2026",
+    e: { plate: "hex", pattern: "half", icon: "bolt", colorPlate: "#facc15", colorPattern: "#101010", colorIcon: "#7f1d1d", scale: 66 } },
+];
+
+const phaseFor = (rank) => rank <= 50 ? "Fase 1 · Founders" : rank <= 120 ? "Fase 2" : rank <= 200 ? "Fase 3" : "Fase final";
+
+class Component extends DCLogic {
+  state = { division: "Community", query: "" };
+
+  renderVals() {
+    const { division, query } = this.state;
+    const q = query.trim().toLowerCase();
+
+    const all = TEAMS.map((t, i) => ({ ...t, order: i + 1 }));
+    const community = all.filter((t) => t.division === "Community").length;
+    const open = all.length - community;
+
+    const inDivision = all
+      .filter((t) => t.division === division)
+      .map((t, i) => ({ ...t, rank: i + 1 }));
+
+    const visible = inDivision.filter((t) =>
+      !q || [t.name, t.a1, t.a2, t.city].join(" ").toLowerCase().includes(q));
+
+    const divisionNote = division === "Community"
+      ? "Hybrid Race · sábado 14 de noviembre"
+      : "Hybrid Race + Zone Challenge · 14 y 15 de noviembre";
+
+    return {
+      stats: [
+        { label: "Parejas inscritas", value: String(all.length), note: "de 50 en Fase 1 · Founders", noteColor: "rgba(255,255,255,.45)" },
+        { label: "Community", value: String(community), note: "Hybrid Race · sábado 14", noteColor: "rgba(255,255,255,.45)" },
+        { label: "Open", value: String(open), note: "Dos días · ranking THF", noteColor: "rgba(255,255,255,.45)" },
+        { label: "Cupos Founder", value: String(Math.max(0, 50 - all.length)), note: "Kit Founder Edition disponible", noteColor: "#f45a0b" },
+      ],
+      division, divisionNote,
+      divisionCount: division === "Community" ? community : open,
+      tabs: ["Community", "Open"].map((label) => ({
+        label, onClick: () => this.setState({ division: label }),
+        bg: division === label ? "#f45a0b" : "transparent",
+        color: division === label ? "#000" : "rgba(255,255,255,.65)",
+      })),
+      query, setQuery: (e) => this.setState({ query: e.target.value }),
+      isEmpty: visible.length === 0,
+      teams: visible.map((t) => ({
+        rank: String(t.rank).padStart(2, "0"),
+        rankColor: t.rank <= 3 ? "#f45a0b" : "rgba(255,255,255,.35)",
+        emblem: emblem(t.e, String(t.order)),
+        name: t.name,
+        phase: phaseFor(t.order),
+        phaseColor: t.order <= 50 ? "#f45a0b" : "rgba(255,255,255,.35)",
+        athlete1: t.a1,
+        athlete2: t.a2,
+        city: t.city,
+        registered: "Inscritos " + t.date,
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>
