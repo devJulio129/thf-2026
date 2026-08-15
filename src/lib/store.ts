@@ -245,6 +245,30 @@ export async function deleteMyTeam(): Promise<void> {
   if (error) throw new Error(`No se pudo eliminar el equipo: ${error.message}`);
 }
 
+/**
+ * Vuelve a calcular el monto del equipo con la fase de precios vigente.
+ *
+ * Se llama justo antes de crear la preference porque el precio se fija al
+ * momento de pagar, no al armar el equipo: si no, se podria apartar precio de
+ * Founders y pagar meses despues, ya en otra fase.
+ *
+ * El trigger teams_apply_division_price repone amount_mxn desde price_phases,
+ * asi que el valor que mandamos aqui no decide nada — solo hace que la columna
+ * entre en el UPDATE y el trigger se dispare.
+ */
+export async function refreshTeamPrice(teamId: string, currentAmount: number): Promise<number> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("teams")
+    .update({ amount_mxn: currentAmount })
+    .eq("id", teamId)
+    .select("amount_mxn")
+    .single();
+
+  if (error) throw new Error(`No se pudo recalcular el precio: ${error.message}`);
+  return data.amount_mxn as number;
+}
+
 export async function attachPreference(teamId: string, preferenceId: string): Promise<void> {
   const supabase = await createClient();
   const { error } = await supabase

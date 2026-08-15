@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { baseUrl, isPubliclyReachable } from "@/lib/env";
 import { preferenceClient } from "@/lib/mercadopago";
-import { attachPreference, getMyTeam } from "@/lib/store";
+import { attachPreference, getMyTeam, refreshTeamPrice } from "@/lib/store";
 import { CURRENCY, DIVISIONS } from "@/lib/thf";
 
 export const runtime = "nodejs";
@@ -29,6 +29,10 @@ export async function POST() {
     return NextResponse.json({ error: "Este equipo ya esta pagado." }, { status: 409 });
   }
 
+  // El precio se fija aqui, no cuando se armo el equipo: se recalcula con la
+  // fase vigente antes de mandarle un importe a Mercado Pago.
+  const amountMXN = await refreshTeamPrice(team.id, team.amountMXN);
+
   const info = DIVISIONS[team.division];
   const site = baseUrl();
   const reachable = isPubliclyReachable(site);
@@ -51,7 +55,7 @@ export async function POST() {
             description: `Equipo ${team.name} · ${team.athletes.map((a) => a.name).join(" y ")}`,
             category_id: "tickets",
             quantity: 1,
-            unit_price: team.amountMXN,
+            unit_price: amountMXN,
             currency_id: CURRENCY,
           },
         ],
@@ -85,7 +89,7 @@ export async function POST() {
 
     return NextResponse.json({
       teamId: team.id,
-      amountMXN: team.amountMXN,
+      amountMXN,
       checkoutUrl: preference.init_point,
     });
   } catch (error) {

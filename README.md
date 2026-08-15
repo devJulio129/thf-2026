@@ -108,8 +108,9 @@ Cuatro tablas en `supabase/migrations/`:
 |---|---|
 | El capitán marca su propio equipo como pagado | Rechazado |
 | Un atleta inserta un pago inventado | Rechazado |
-| Un atleta manda `amount_mxn: 1` al crear o editar su equipo | Se ignora: el trigger lo repone desde `division_prices` |
-| Un atleta edita el catálogo `division_prices` | Rechazado |
+| Un atleta manda `amount_mxn: 1` al crear o editar su equipo | Se ignora: el trigger lo repone desde `price_phases` |
+| Un atleta edita el catálogo `price_phases` | Rechazado |
+| Un atleta crea equipos sin pagar para empujar la fase | No cuentan: el cupo sólo mira las parejas pagadas |
 | Un equipo pagado cambia de categoría | Rechazado; conserva precio y división |
 | Un atleta ve o borra el equipo de otro | No lo ve, no lo borra |
 | Un atleta registra un segundo equipo | Rechazado |
@@ -183,11 +184,41 @@ en `APP_BASE_URL`. Sin eso el código detecta que estás en localhost, omite
 Tres cosas que no son negociables y que ya están resueltas:
 
 1. **El precio lo pone el servidor.** El request de checkout va vacío; el monto
-   sale de la base. No hay forma de pedir un cobro por otro importe.
+   sale de la base y se recalcula con la fase vigente justo antes de crear la
+   preference. No hay forma de pedir un cobro por otro importe.
 2. **El webhook es la única fuente de verdad.** Las `back_urls` se pueden
    escribir a mano, y el atleta puede cerrar la pestaña sin volver.
 3. **Todo es idempotente.** Mercado Pago reintenta y manda varias
    notificaciones por el mismo pago conforme cambia de estado.
+
+### El precio sube por fases
+
+El sitio anuncia cuatro tramos: conforme se llenan lugares, sube la inscripción
+de las dos divisiones. Viven en `price_phases`:
+
+| Fase | Cupo acumulado | Community (CM) | Open / Full Weekend (OP) |
+|---|---|---|---|
+| 1 · Founders | 1–50 parejas | $2,000 | $2,300 |
+| 2 | 51–120 | $2,200 | $2,500 |
+| 3 | 121–200 | $2,400 | $2,700 |
+| Final | 201+ | $2,600 | $2,900 |
+
+Dos reglas que se decidieron con el cliente y que están en el código:
+
+- **Sólo cuentan las parejas pagadas.** Un equipo creado y nunca pagado no ocupa
+  lugar; si contara, cualquiera podría empujar el precio a la fase siguiente sin
+  gastar un peso. Lo resuelve `paid_pairs()`, que es `security definer` porque
+  RLS impide a un atleta ver equipos ajenos.
+- **El precio se fija al pagar, no al armar el equipo.** Lo que se ve en el
+  perfil antes de pagar es una cotización; `refreshTeamPrice()` lo recalcula
+  justo antes de crear la preference. Si no, se podría apartar precio de
+  Founders y pagar meses después.
+
+Un equipo ya pagado conserva su monto aunque el catálogo suba después. Y si el
+cupo cayera en un hueco sin fase, el alta se rechaza en vez de cobrar un importe
+inventado.
+
+La vista `current_phase` publica la fase vigente y cuántos lugares quedan.
 
 ### Estados de pago
 
