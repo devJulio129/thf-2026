@@ -109,7 +109,8 @@ export function ProfileEditor({
             border: "1px solid rgba(255,255,255,.2)",
             background: "none",
             color: "#fff",
-            padding: "8px 16px",
+            // 11px de alto para que el area tactil pase de 44px en telefono.
+            padding: "11px 16px",
             fontSize: 12,
             textTransform: "uppercase",
             letterSpacing: "0.05em",

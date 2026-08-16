@@ -99,6 +99,7 @@ export default async function PerfilPage() {
             padding: "0 20px",
             gap: 12,
           }}
+          className="thf-perfil-nav"
         >
           <Link
             href="/"

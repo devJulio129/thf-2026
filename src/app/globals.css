@@ -357,6 +357,78 @@ a:hover {
   }
 }
 
+/* Las tarjetas de la landing se disenaron para vivir en columnas de
+   escritorio: minHeight grande + space-between reparte el aire vertical. Al
+   apilarse en telefono ese aire se vuelve un hueco muerto entre el encabezado
+   y el contenido. Aqui respiran lo justo. */
+@media (max-width: 900px) {
+  .thf-cat-card {
+    min-height: 0 !important;
+    gap: 28px;
+  }
+
+  .thf-trait-card {
+    min-height: 0 !important;
+    gap: 18px;
+  }
+
+  /* El bloque de titulo traia un marginTop de 80px pensado para columnas de
+     escritorio; apilado era puro hueco. */
+  .thf-trait-card > div:last-child {
+    margin-top: 0 !important;
+  }
+
+  /* La tarjeta de la estacion tenia altura fija pensada para dos columnas;
+     apilada, la foto quedaba en una tira de 80px. Altura libre y la foto
+     recupera su presencia. */
+  .thf-station-card {
+    height: auto !important;
+  }
+
+  .thf-station-card > div:last-child {
+    min-height: 220px;
+  }
+}
+
+/* Los sliders y los selectores de color del editor de emblema son demasiado
+   finos para el dedo (16 y 26px). Mas area tactil, mismo aspecto. */
+@media (max-width: 900px) {
+  input[type="range"] {
+    height: 28px;
+  }
+
+  input[type="color"] {
+    height: 36px;
+    min-width: 48px;
+  }
+}
+
+/* Inicio y Salir de la cabecera del perfil son texto de 18px de alto: area
+   tactil imposible en telefono. Relleno vertical sin mover el layout (la
+   cabecera mide 64px y esta centrada). */
+@media (max-width: 900px) {
+  .thf-perfil-nav > a,
+  .thf-perfil-nav button {
+    padding-top: 13px !important;
+    padding-bottom: 13px !important;
+  }
+}
+
+/* Cabecera de la landing en telefono: el logo parte en tres lineas y los dos
+   botones quedan a nada del borde. Botones mas compactos, mismo estilo. */
+@media (max-width: 560px) {
+  .thf-nav-actions {
+    gap: 6px !important;
+  }
+
+  .thf-nav-actions > a {
+    height: 36px !important;
+    padding: 0 10px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.08em !important;
+  }
+}
+
 /* Ciudad / nacimiento / playera del constructor de equipo: tres columnas no
    caben en telefono y los campos quedaban de ~100px. Ciudad toma el renglon
    completo y fecha + talla se reparten el de abajo. */

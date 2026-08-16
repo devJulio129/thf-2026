@@ -221,7 +221,10 @@ export default async function Home() {
           ))}
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto" }}>
+        <div
+          className="thf-nav-actions"
+          style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto" }}
+        >
           <a
             href={ROUTES.portal}
             style={{
@@ -824,7 +827,7 @@ export default async function Home() {
           </div>
 
           <div
-            className="thf-split"
+            className="thf-split thf-station-card"
             style={{
               marginTop: 48,
               display: "grid",
