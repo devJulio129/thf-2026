@@ -178,7 +178,10 @@ export function TeamBuilder({
                 placeholder="correo@ejemplo.com"
                 required
               />
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 8 }}>
+              <div
+                className="thf-athlete-grid"
+                style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 8 }}
+              >
                 <input
                   name={`athlete-${index}-city`}
                   className="thf-input"

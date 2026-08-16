@@ -68,6 +68,7 @@ export default async function LeaderboardPage() {
         }}
       >
         <div
+          className="thf-lb-nav"
           style={{
             maxWidth: 1200,
             margin: "0 auto",
@@ -150,7 +151,9 @@ export default async function LeaderboardPage() {
           <h1
             className="thf-wordmark"
             style={{
-              fontSize: "clamp(3rem,7vw,6rem)",
+              // El piso en 2.4rem es para que "Leaderboard." quepa en 390px;
+              // en escritorio el clamp resuelve igual que antes.
+              fontSize: "clamp(2.4rem,7vw,6rem)",
               textTransform: "uppercase",
               lineHeight: 0.88,
               margin: 0,
