@@ -157,7 +157,63 @@ export async function getPublishedWorkout(): Promise<Workout | null> {
   };
 }
 
+export type PricePhase = {
+  phase: number;
+  label: string;
+  fromPairs: number;
+  toPairs: number | null;
+  priceCM: number;
+  priceOP: number;
+  active: boolean;
+};
+
+/** Las cuatro fases del catalogo, con cual esta activa. */
+export async function listPhases(): Promise<PricePhase[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("price_phases")
+    .select("phase, label, from_pairs, to_pairs, price_cm, price_op, active")
+    .order("phase");
+
+  if (error) throw new Error(`No se pudieron leer las fases: ${error.message}`);
+
+  return (data ?? []).map((row) => ({
+    phase: row.phase,
+    label: row.label,
+    fromPairs: row.from_pairs,
+    toPairs: row.to_pairs,
+    priceCM: row.price_cm,
+    priceOP: row.price_op,
+    active: row.active,
+  }));
+}
+
+/** Parejas pagadas, la referencia para decidir el cambio de fase. */
+export async function countPaidPairs(): Promise<number> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("paid_pairs");
+  if (error) throw new Error(`No se pudo contar el cupo: ${error.message}`);
+  return data ?? 0;
+}
+
 // ------------------------------------------------------------- escrituras --
+
+/**
+ * Activa una fase de precios. El trigger price_phases_single_active desactiva
+ * las demas; desde ese momento todo equipo nuevo (y todo recalculo previo al
+ * pago) cobra los precios de esta fase. Los equipos ya pagados no se tocan.
+ */
+export async function activatePhase(phase: number): Promise<void> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("price_phases")
+    .update({ active: true })
+    .eq("phase", phase)
+    .select("phase");
+
+  if (error) throw new Error(`No se pudo activar la fase: ${error.message}`);
+  if (!data?.length) throw new Error(`No existe la fase ${phase}.`);
+}
 
 /**
  * Marca un equipo como pagado a mano, para las transferencias bancarias.

@@ -127,15 +127,15 @@ check(
   `${afterPaid.division} / ${afterPaid.amount_mxn}`,
 );
 
-// ------------------------------------------------------ el salto de fase --
+// -------------------------------------------- el cambio de fase es manual --
 
-console.log("\nEl precio sube solo al llenarse el cupo");
+console.log("\nLa fase la decide el staff con un boton, no un contador");
 
-// Solo cuentan las pagadas: el equipo de arriba ya suma uno.
+// El conteo de pagadas existe como referencia para el staff.
 const { data: pagadas } = await admin.rpc("paid_pairs");
-check("las parejas pagadas se cuentan para el cupo", pagadas >= 1, `${pagadas} pagadas`);
+check("las parejas pagadas se cuentan como referencia", pagadas >= 1, `${pagadas} pagadas`);
 
-// Un equipo sin pagar NO debe mover el cupo.
+// Un equipo sin pagar NO suma al conteo.
 const { user: colado, uid: uidColado } = await nuevoAtleta("colado");
 await colado.from("teams").insert({
   name: "Los Que No Pagan",
@@ -147,53 +147,39 @@ await colado.from("teams").insert({
 });
 const { data: pagadasDespues } = await admin.rpc("paid_pairs");
 check(
-  "un equipo sin pagar no ocupa lugar",
+  "un equipo sin pagar no suma al conteo",
   pagadasDespues === pagadas,
   `sigue en ${pagadasDespues}`,
 );
 
-// Encogemos la Fase 1 para que la siguiente pareja caiga en la Fase 2.
-const { data: fase1Original } = await admin
-  .from("price_phases")
-  .select("*")
-  .eq("phase", 1)
-  .single();
 const { data: fase2 } = await admin.from("price_phases").select("*").eq("phase", 2).single();
 
-await admin.from("price_phases").update({ to_pairs: pagadas }).eq("phase", 1);
+// El staff activa la Fase 2 (lo que hace el boton del panel).
+await admin.from("price_phases").update({ active: true }).eq("phase", 2);
+
+const { data: fase1Tras } = await admin
+  .from("price_phases")
+  .select("active")
+  .eq("phase", 1)
+  .single();
+check("solo una fase queda activa a la vez", fase1Tras.active === false, "fase 1 se desactivo");
 
 const { user: siguiente, uid: uidSiguiente } = await nuevoAtleta("fase2");
-const nuevoEquipo = (nombre) =>
-  siguiente
-    .from("teams")
-    .insert({
-      name: nombre,
-      division: "OP",
-      gender: "MX",
-      captain_id: uidSiguiente,
-      amount_mxn: 1,
-      emblem: {},
-    })
-    .select("id, amount_mxn")
-    .single();
-
-// Con la Fase 1 encogida y la Fase 2 todavia empezando en 51, el cupo actual no
-// cae en ninguna fase. Preferimos que no se pueda inscribir a cobrar un importe
-// inventado.
-const { error: huecoError } = await nuevoEquipo("Los Del Hueco");
-check(
-  "si ninguna fase cubre el cupo, no se crea el equipo",
-  Boolean(huecoError),
-  huecoError ? `rechazado: ${huecoError.message.slice(0, 60)}` : "se creo igual",
-);
-
-// Ahora si: la Fase 2 arranca donde termino la 1.
-await admin.from("price_phases").update({ from_pairs: pagadas + 1 }).eq("phase", 2);
-
-const { data: teamFase2 } = await nuevoEquipo("Los De La Fase Dos");
+const { data: teamFase2 } = await siguiente
+  .from("teams")
+  .insert({
+    name: "Los De La Fase Dos",
+    division: "OP",
+    gender: "MX",
+    captain_id: uidSiguiente,
+    amount_mxn: 1,
+    emblem: {},
+  })
+  .select("id, amount_mxn")
+  .single();
 
 check(
-  "al llenarse la fase, la siguiente pareja paga el precio nuevo",
+  "con la fase nueva activa, el equipo nuevo paga el precio nuevo",
   teamFase2.amount_mxn === fase2.price_op,
   `esperaba ${fase2.price_op}, quedo ${teamFase2.amount_mxn}`,
 );
@@ -227,14 +213,15 @@ check(
   `${recalculado.amount_mxn}`,
 );
 
-// Devolvemos el catalogo a como estaba.
-await admin
+// Un atleta no puede activar fases ni editar precios.
+await user.from("price_phases").update({ active: true }).eq("phase", 4);
+const { data: fase4 } = await admin
   .from("price_phases")
-  .update({ to_pairs: fase1Original.to_pairs })
-  .eq("phase", 1);
-await admin.from("price_phases").update({ from_pairs: fase2.from_pairs }).eq("phase", 2);
+  .select("active")
+  .eq("phase", 4)
+  .single();
+check("un atleta no puede cambiar la fase activa", fase4.active === false, "fase 4 sigue inactiva");
 
-// Los precios del catalogo no los edita un atleta.
 const { error: priceError } = await user
   .from("price_phases")
   .update({ price_op: 1 })
@@ -246,16 +233,36 @@ const { data: catalogo } = await admin
   .single();
 check(
   "un atleta no puede editar el catalogo de fases",
-  catalogo.price_op === fase1Original.price_op,
+  catalogo.price_op === 2300,
   priceError ? `rechazado: ${priceError.code}` : `sigue en ${catalogo.price_op}`,
 );
+
+// Sin ninguna fase activa, el alta se rechaza en vez de inventar un precio.
+await admin.from("price_phases").update({ active: false }).eq("phase", 2);
+const { user: sinFase, uid: uidSinFase } = await nuevoAtleta("sinfase");
+const { error: sinFaseError } = await sinFase.from("teams").insert({
+  name: "Los Sin Fase",
+  division: "CM",
+  gender: "MX",
+  captain_id: uidSinFase,
+  amount_mxn: 1,
+  emblem: {},
+});
+check(
+  "sin fase activa no se puede crear un equipo",
+  Boolean(sinFaseError),
+  sinFaseError ? `rechazado: ${sinFaseError.message.slice(0, 55)}` : "se creo igual",
+);
+
+// Se restaura la Fase 1 como activa, que es el estado normal.
+await admin.from("price_phases").update({ active: true }).eq("phase", 1);
 
 // ------------------------------------------------------------- limpieza --
 
 await admin.from("teams").delete().eq("id", team.id);
 await admin.from("teams").delete().eq("id", teamFase2.id);
 await admin.from("teams").delete().eq("captain_id", uidColado);
-for (const id of [uid, uidColado, uidSiguiente]) {
+for (const id of [uid, uidColado, uidSiguiente, uidSinFase]) {
   await admin.auth.admin.deleteUser(id);
 }
 

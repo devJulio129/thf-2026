@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import {
+  activatePhase,
   deleteWorkout,
   markTeamPaidManually,
   requireAdmin,
@@ -62,6 +63,23 @@ export async function deleteWorkoutAction(id: string): Promise<void> {
   await deleteWorkout(id);
   revalidatePath("/admin");
   revalidatePath("/");
+}
+
+/**
+ * Cambia la fase de precios vigente. Afecta a todo lo que se pinta y a todo lo
+ * que se cobra de aqui en adelante; los equipos ya pagados conservan su monto.
+ */
+export async function activatePhaseAction(phase: number): Promise<void> {
+  await requireAdmin();
+  await activatePhase(phase);
+  revalidatePath("/admin");
+  // Todas estas pintan el precio de la fase activa.
+  revalidatePath("/");
+  revalidatePath("/perfil");
+  revalidatePath("/leaderboard");
+  revalidatePath("/community");
+  revalidatePath("/open");
+  revalidatePath("/quiz");
 }
 
 export async function markPaidAction(teamId: string): Promise<void> {

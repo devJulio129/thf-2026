@@ -24,10 +24,13 @@ export function TeamSection({
   team,
   defaultName,
   defaultEmail,
+  prices,
 }: {
   team: Team | null;
   defaultName: string;
   defaultEmail: string;
+  /** Precios de la fase activa; los pinta todo el flujo de alta y pago. */
+  prices: { CM: number; OP: number };
 }) {
   const [creating, setCreating] = useState(false);
 
@@ -41,11 +44,12 @@ export function TeamSection({
       </div>
 
       {team ? (
-        <TeamPanel team={team} />
+        <TeamPanel team={team} prices={prices} />
       ) : creating ? (
         <TeamBuilder
           defaultName={defaultName}
           defaultEmail={defaultEmail}
+          prices={prices}
           onCancel={() => setCreating(false)}
         />
       ) : (

@@ -61,10 +61,13 @@ const ghostButton: CSSProperties = {
 export function TeamBuilder({
   defaultName,
   defaultEmail,
+  prices,
   onCancel,
 }: {
   defaultName: string;
   defaultEmail: string;
+  /** Precios de la fase activa: lo que se pinta es lo que se va a cobrar. */
+  prices: { CM: number; OP: number };
   onCancel: () => void;
 }) {
   const [emblem, setEmblem] = useState<EmblemSpec>(DEFAULT_EMBLEM);
@@ -128,7 +131,7 @@ export function TeamBuilder({
                   {info.name}
                 </div>
                 <div style={{ marginTop: 4, fontSize: 12, color: "#f45a0b" }}>
-                  {formatMXN(info.priceMXN)} por pareja
+                  {formatMXN(prices[id])} por pareja
                 </div>
               </button>
             );
@@ -178,6 +181,28 @@ export function TeamBuilder({
                 placeholder="correo@ejemplo.com"
                 required
               />
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 8 }}>
+                <input
+                  name={`athlete-${index}-phone`}
+                  type="tel"
+                  inputMode="tel"
+                  className="thf-input"
+                  placeholder="Teléfono · 10 dígitos"
+                  aria-label={`Telefono del atleta ${index + 1}`}
+                  required
+                  minLength={10}
+                />
+                <input
+                  name={`athlete-${index}-emergency`}
+                  type="tel"
+                  inputMode="tel"
+                  className="thf-input"
+                  placeholder="Emergencia · 10 dígitos"
+                  aria-label={`Telefono de emergencia del atleta ${index + 1}`}
+                  required
+                  minLength={10}
+                />
+              </div>
               <div
                 className="thf-athlete-grid"
                 style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 8 }}
@@ -277,7 +302,7 @@ export function TeamBuilder({
             Inscripción por pareja · {DIVISIONS[division].name}
           </div>
           <div className="thf-wordmark" style={{ marginTop: 4, fontSize: 26, color: "#f45a0b" }}>
-            {formatMXN(DIVISIONS[division].priceMXN)} MXN
+            {formatMXN(prices[division])} MXN
           </div>
         </div>
         <div style={{ fontSize: 11, color: "rgba(255,255,255,.45)", maxWidth: "34ch" }}>

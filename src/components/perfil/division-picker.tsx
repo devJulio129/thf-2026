@@ -14,7 +14,14 @@ const INITIAL: DivisionChangeState = { error: null };
  * anuncia en el propio boton. El monto lo recalcula la base: aqui solo se manda
  * la division elegida.
  */
-export function DivisionPicker({ current }: { current: Division }) {
+export function DivisionPicker({
+  current,
+  prices,
+}: {
+  current: Division;
+  /** Precios de la fase activa: el boton anuncia lo que se va a cobrar. */
+  prices: { CM: number; OP: number };
+}) {
   const [state, formAction, pending] = useActionState(changeDivisionAction, INITIAL);
 
   return (
@@ -69,7 +76,7 @@ export function DivisionPicker({ current }: { current: Division }) {
                 ) : null}
               </div>
               <div style={{ marginTop: 4, fontSize: 13, color: selected ? "#f45a0b" : "rgba(255,255,255,.5)" }}>
-                {formatMXN(info.priceMXN)} por pareja
+                {formatMXN(prices[id])} por pareja
               </div>
               <div
                 style={{

@@ -357,6 +357,18 @@ a:hover {
   }
 }
 
+/* El menu hamburguesa existe solo donde los enlaces del nav van ocultos:
+   mismo corte de 860px que .thf-nav-links. */
+.thf-mobile-menu {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .thf-mobile-menu {
+    display: block;
+  }
+}
+
 /* Las tarjetas de la landing se disenaron para vivir en columnas de
    escritorio: minHeight grande + space-between reparte el aire vertical. Al
    apilarse en telefono ese aire se vuelve un hueco muerto entre el encabezado

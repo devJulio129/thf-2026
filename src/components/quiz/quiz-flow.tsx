@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { QUESTIONS, QUIZ_RESULTS, scoreQuiz } from "@/lib/quiz-data";
-import type { Division } from "@/lib/thf";
+import { formatMXN, type Division } from "@/lib/thf";
 
 /**
  * Quiz de categoria, portado de Tampico Hybrid Fest - Quiz.dc.html: una
  * pregunta a la vez, barra de avance arriba y tarjeta de resultado al final.
  */
-export function QuizFlow() {
+export function QuizFlow({ prices }: { prices: { CM: number; OP: number } }) {
   const [answers, setAnswers] = useState<number[]>([]);
   const [result, setResult] = useState<Division | null>(null);
 
@@ -152,7 +152,7 @@ export function QuizFlow() {
                     {QUIZ_RESULTS[result].name}
                   </div>
                   <p style={{ fontSize: 14, color: "rgba(255,255,255,.6)", margin: "0 0 24px" }}>
-                    {QUIZ_RESULTS[result].tag}
+                    {QUIZ_RESULTS[result].tag} {formatMXN(prices[result])} MXN por pareja.
                   </p>
                   <p
                     style={{

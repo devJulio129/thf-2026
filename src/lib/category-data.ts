@@ -7,7 +7,7 @@
  * la foto del hero. Open ademas suma la seccion de los dos dias.
  */
 
-import type { Division } from "./thf";
+import { formatMXN, type Division } from "./thf";
 
 export type Fact = { icon: string; label: string; value: string };
 export type Station = { n: string; title: string; desc: string };
@@ -50,6 +50,21 @@ const SHARED_STATIONS_NOTE =
   "* Estaciones referenciales. Movimientos exactos y orden se anuncian la semana del evento.";
 
 export const STATIONS_NOTE = SHARED_STATIONS_NOTE;
+
+/**
+ * Reemplaza el dato "Inscripcion" con el precio de la fase activa. El resto
+ * del contenido es fijo; el precio es el unico dato que cambia con el tiempo.
+ */
+export function withPhasePrice(content: CategoryContent, priceMXN: number): CategoryContent {
+  return {
+    ...content,
+    facts: content.facts.map((fact) =>
+      fact.label === "Inscripción"
+        ? { ...fact, value: `${formatMXN(priceMXN)} MXN por pareja` }
+        : fact,
+    ),
+  };
+}
 
 export const CATEGORY_CONTENT: Record<Division, CategoryContent> = {
   CM: {

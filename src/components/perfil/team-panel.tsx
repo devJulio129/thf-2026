@@ -20,6 +20,8 @@ type Props = {
     emblem: unknown;
     athletes: { name: string; email: string; shirtSize: string }[];
   };
+  /** Precios de la fase activa, para el selector de categoria. */
+  prices: { CM: number; OP: number };
 };
 
 /** Fila con el dato bancario y su boton de copiar. */
@@ -96,7 +98,7 @@ function BankRow({ label, value }: { label: string; value: string }) {
  * Equipo ya registrado y bloque de pago, portados de
  * Tampico Hybrid Fest - Profile.dc.html.
  */
-export function TeamPanel({ team }: Props) {
+export function TeamPanel({ team, prices }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
   const [showTransfer, setShowTransfer] = useState(false);
@@ -338,7 +340,7 @@ export function TeamPanel({ team }: Props) {
                 borderBottom: "1px solid rgba(255,255,255,.12)",
               }}
             >
-              <DivisionPicker current={team.division} />
+              <DivisionPicker current={team.division} prices={prices} />
             </div>
 
             {error ? (

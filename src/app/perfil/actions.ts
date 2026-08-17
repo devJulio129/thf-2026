@@ -16,20 +16,37 @@ import {
 export type TeamFormState = { error: string | null };
 export type ProfileFormState = { error: string | null; saved?: boolean };
 
+/** Deja solo digitos; acepta "833 123 45 67" o "(833) 123-4567". */
+function cleanPhone(raw: string): string {
+  return raw.replace(/\D/g, "");
+}
+
 function readAthlete(formData: FormData, index: number): Athlete {
   const name = String(formData.get(`athlete-${index}-name`) ?? "").trim();
   const email = String(formData.get(`athlete-${index}-email`) ?? "").trim().toLowerCase();
   const shirtSize = String(formData.get(`athlete-${index}-shirt`) ?? "");
   const city = String(formData.get(`athlete-${index}-city`) ?? "").trim();
   const birthDate = String(formData.get(`athlete-${index}-birth`) ?? "").trim();
+  const phone = cleanPhone(String(formData.get(`athlete-${index}-phone`) ?? ""));
+  const emergencyPhone = cleanPhone(
+    String(formData.get(`athlete-${index}-emergency`) ?? ""),
+  );
 
   if (name.length < 2) throw new Error(`Falta el nombre del atleta ${index + 1}.`);
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw new Error(`El correo del atleta ${index + 1} es invalido.`);
   }
   if (!isShirtSize(shirtSize)) throw new Error(`Falta la talla del atleta ${index + 1}.`);
+  if (phone.length !== 10) {
+    throw new Error(`El teléfono del atleta ${index + 1} debe tener 10 dígitos.`);
+  }
+  if (emergencyPhone.length !== 10) {
+    throw new Error(
+      `El teléfono de emergencia del atleta ${index + 1} debe tener 10 dígitos.`,
+    );
+  }
 
-  return { name, email, shirtSize, city, birthDate: birthDate || null };
+  return { name, email, shirtSize, city, birthDate: birthDate || null, phone, emergencyPhone };
 }
 
 export async function createTeamAction(

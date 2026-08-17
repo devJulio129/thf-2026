@@ -71,14 +71,15 @@ export type QuizResult = {
 export const QUIZ_RESULTS: Record<Division, QuizResult> = {
   CM: {
     name: "Community",
-    tag: "Una jornada. Un reto. Toda la energía. $2,000 MXN por pareja.",
+    // El precio no va aqui: lo pinta el componente con la fase activa.
+    tag: "Una jornada. Un reto. Toda la energía.",
     desc: "La categoría para quienes vienen por la experiencia, la adrenalina y la comunidad. Compiten en pareja el sábado 14 en la Hybrid Race, con relevos libres y cargas ajustadas.",
     recommend: "Foco en cardio y constancia. El sábado lo darán todo.",
     href: "/community",
   },
   OP: {
     name: "Open",
-    tag: "Dos días. Cero excusas. Por el ranking. $2,300 MXN por pareja.",
+    tag: "Dos días. Cero excusas. Por el ranking.",
     desc: "La modalidad Full Weekend: Hybrid Race el sábado 14 con cargas Open y Zone Challenge el domingo 15, cien minutos en seis zonas. Aquí se define el título The Fittest.",
     recommend: "Trabajen fuerza, cardio y técnica. No hay margen de error.",
     href: "/open",

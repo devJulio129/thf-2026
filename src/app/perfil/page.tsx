@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { signOut } from "@/app/login/actions";
 import { ProfileEditor, type ProfileData } from "@/components/perfil/profile-editor";
 import { TeamSection } from "@/components/perfil/team-section";
+import { getCurrentPhase, toPrices } from "@/lib/phases";
 import { getMyTeam } from "@/lib/store";
 import { createClient, getCurrentUser } from "@/lib/supabase/server";
 import { DIVISIONS, formatMXN, genderLabel } from "@/lib/thf";
@@ -46,6 +47,7 @@ export default async function PerfilPage() {
     .maybeSingle();
 
   const team = await getMyTeam();
+  const phase = await getCurrentPhase();
 
   const profile: ProfileData = {
     displayName: profileRow?.display_name || user.email?.split("@")[0] || "Atleta",
@@ -262,6 +264,7 @@ export default async function PerfilPage() {
               }
               defaultName={profile.displayName}
               defaultEmail={user.email ?? ""}
+              prices={toPrices(phase)}
             />
           </div>
 

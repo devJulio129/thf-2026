@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table";
 import { getLeaderboard } from "@/lib/leaderboard";
+import { getCurrentPhase } from "@/lib/phases";
 import { ROUTES } from "@/lib/landing-data";
 
 export const metadata: Metadata = {
@@ -13,19 +14,18 @@ export const metadata: Metadata = {
 /** Se actualiza conforme entran pagos, asi que no se cachea. */
 export const dynamic = "force-dynamic";
 
-/** Cupos de la primera fase, con kit Founder Edition. */
-const FOUNDER_SLOTS = 50;
-
 export default async function LeaderboardPage() {
-  const teams = await getLeaderboard();
+  const [teams, phase] = await Promise.all([getLeaderboard(), getCurrentPhase()]);
   const community = teams.filter((team) => team.division === "CM").length;
   const open = teams.filter((team) => team.division === "OP").length;
 
+  // La fase y el cupo salen de la base: son los mismos que decide el staff
+  // desde el panel y los que cobra la inscripcion.
   const stats = [
     {
       label: "Parejas inscritas",
       value: String(teams.length),
-      note: `de ${FOUNDER_SLOTS} en Fase 1 · Founders`,
+      note: phase.toPairs === null ? phase.label : `de ${phase.toPairs} en ${phase.label}`,
       noteColor: "rgba(255,255,255,.45)",
     },
     {
@@ -41,9 +41,13 @@ export default async function LeaderboardPage() {
       noteColor: "rgba(255,255,255,.45)",
     },
     {
-      label: "Cupos Founder",
-      value: String(Math.max(0, FOUNDER_SLOTS - teams.length)),
-      note: "Kit Founder Edition disponible",
+      label: "Cupos de la fase",
+      value:
+        phase.remainingPairs === null ? "∞" : String(Math.max(0, phase.remainingPairs)),
+      note:
+        phase.phase === 1
+          ? "Kit Founder Edition disponible"
+          : `Precios de ${phase.label}`,
       noteColor: "#f45a0b",
     },
   ];
@@ -216,8 +220,8 @@ export default async function LeaderboardPage() {
             }}
           >
             <p style={{ fontSize: 12, color: "rgba(255,255,255,.4)", margin: 0, maxWidth: "60ch" }}>
-              La lista se actualiza cuando el equipo THF valida datos y pago. Las primeras{" "}
-              {FOUNDER_SLOTS} parejas conservan el kit Founder Edition.
+              La lista se actualiza cuando el equipo THF valida datos y pago. Las primeras 50
+              parejas conservan el kit Founder Edition.
             </p>
             <Link
               href="/perfil"

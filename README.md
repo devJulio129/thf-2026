@@ -203,22 +203,25 @@ de las dos divisiones. Viven en `price_phases`:
 | 3 | 121–200 | $2,400 | $2,700 |
 | Final | 201+ | $2,600 | $2,900 |
 
-Dos reglas que se decidieron con el cliente y que están en el código:
+Tres reglas que se decidieron con el cliente y que están en el código:
 
-- **Sólo cuentan las parejas pagadas.** Un equipo creado y nunca pagado no ocupa
-  lugar; si contara, cualquiera podría empujar el precio a la fase siguiente sin
-  gastar un peso. Lo resuelve `paid_pairs()`, que es `security definer` porque
-  RLS impide a un atleta ver equipos ajenos.
+- **La fase la cambia el staff con un botón**, desde el panel `/admin`. No es
+  un automatismo: el conteo de parejas pagadas (`paid_pairs()`) se muestra como
+  referencia para decidir cuándo apretar, pero no dispara nada. Sólo una fase
+  puede estar activa a la vez (trigger `price_phases_single_active`).
+- **Sólo cuentan las parejas pagadas** en ese conteo de referencia. Un equipo
+  creado y nunca pagado no suma.
 - **El precio se fija al pagar, no al armar el equipo.** Lo que se ve en el
   perfil antes de pagar es una cotización; `refreshTeamPrice()` lo recalcula
-  justo antes de crear la preference. Si no, se podría apartar precio de
-  Founders y pagar meses después.
+  justo antes de crear la preference con la fase activa en ese momento.
 
-Un equipo ya pagado conserva su monto aunque el catálogo suba después. Y si el
-cupo cayera en un hueco sin fase, el alta se rechaza en vez de cobrar un importe
-inventado.
+Un equipo ya pagado conserva su monto aunque la fase cambie después. Sin
+ninguna fase activa, el alta se rechaza en vez de cobrar un importe inventado.
 
-La vista `current_phase` publica la fase vigente y cuántos lugares quedan.
+La vista `current_phase` publica la fase activa y sus precios. **Todo precio
+que se pinta en el sitio** (landing, categorías, quiz, constructor, selector
+de división, leaderboard) sale de ahí vía `lib/phases.ts` — nunca de un número
+quemado en el código.
 
 ### Estados de pago
 

@@ -1,7 +1,10 @@
 import type { CSSProperties } from "react";
 
 import { Countdown } from "@/components/landing/countdown";
+import { MobileMenu } from "@/components/landing/mobile-menu";
 import { getPublishedWorkout } from "@/lib/admin";
+import { getCurrentPhase } from "@/lib/phases";
+import { formatMXN } from "@/lib/thf";
 import { WodToday } from "@/components/landing/wod-today";
 import {
   APP_AGENDA,
@@ -145,6 +148,9 @@ export default async function Home() {
   const communityCard = categoryCardStyle("Community");
   const openCard = categoryCardStyle("Open");
 
+  // Los precios que se anuncian son los de la fase que el staff dejo activa.
+  const phase = await getCurrentPhase();
+
   return (
     <div
       style={{
@@ -170,6 +176,7 @@ export default async function Home() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <MobileMenu links={NAV_LINKS} portalHref={ROUTES.portal} />
           <div style={{ lineHeight: 1 }}>
             <div
               className="thf-wordmark"
@@ -936,7 +943,7 @@ export default async function Home() {
                 >
                   Hybrid Race · sábado 14
                   <br />
-                  $2,000 MXN por pareja
+                  {formatMXN(phase.priceCM)} MXN por pareja
                 </span>
                 <svg
                   width="28"
@@ -1028,7 +1035,7 @@ export default async function Home() {
                 >
                   Full Weekend · 14 y 15
                   <br />
-                  $2,300 MXN por pareja
+                  {formatMXN(phase.priceOP)} MXN por pareja
                 </span>
                 <svg
                   width="28"

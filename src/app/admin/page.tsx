@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { PhaseManager } from "@/components/admin/phase-manager";
 import { TeamsManager } from "@/components/admin/teams-manager";
 import { WorkoutManager } from "@/components/admin/workout-manager";
-import { isAdmin, listTeams, listWorkouts } from "@/lib/admin";
+import { countPaidPairs, isAdmin, listPhases, listTeams, listWorkouts } from "@/lib/admin";
 import { getCurrentUser } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -69,7 +70,12 @@ export default async function AdminPage() {
     );
   }
 
-  const [teams, workouts] = await Promise.all([listTeams(), listWorkouts()]);
+  const [teams, workouts, phases, paidPairs] = await Promise.all([
+    listTeams(),
+    listWorkouts(),
+    listPhases(),
+    countPaidPairs(),
+  ]);
 
   return (
     <div
@@ -142,6 +148,7 @@ export default async function AdminPage() {
 
       <main style={{ padding: "48px 20px 96px" }}>
         <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gap: 48 }}>
+          <PhaseManager phases={phases} paidPairs={paidPairs} />
           <WorkoutManager workouts={workouts} />
           <TeamsManager teams={teams} />
         </div>

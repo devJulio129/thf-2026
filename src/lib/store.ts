@@ -33,6 +33,8 @@ export type Athlete = {
   shirtSize: ShirtSize;
   city: string;
   birthDate: string | null;
+  phone: string;
+  emergencyPhone: string;
 };
 
 export type Emblem = {
@@ -89,6 +91,8 @@ type TeamRow = {
     shirt_size: ShirtSize;
     city: string;
     birth_date: string | null;
+    phone: string;
+    emergency_phone: string;
   }[] | null;
   payments?:
     | {
@@ -105,7 +109,7 @@ type TeamRow = {
 const TEAM_SELECT = `
   id, name, division, gender, captain_id, emblem, amount_mxn, status,
   preference_id, paid_at, created_at,
-  team_members ( name, email, shirt_size, city, birth_date ),
+  team_members ( name, email, shirt_size, city, birth_date, phone, emergency_phone ),
   payments ( id, status, status_detail, amount_mxn, payment_method, processed_at )
 `;
 
@@ -128,6 +132,8 @@ function toTeam(row: TeamRow): Team {
       shirtSize: member.shirt_size,
       city: member.city,
       birthDate: member.birth_date,
+      phone: member.phone,
+      emergencyPhone: member.emergency_phone,
     })),
     payments: (row.payments ?? [])
       .map((payment) => ({
@@ -219,6 +225,8 @@ export async function createTeam(input: CreateTeamInput): Promise<Team> {
       shirt_size: athlete.shirtSize,
       city: athlete.city,
       birth_date: athlete.birthDate,
+      phone: athlete.phone,
+      emergency_phone: athlete.emergencyPhone,
     })),
   );
 
