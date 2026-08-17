@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { signOut } from "@/app/login/actions";
+import { AvatarUploader } from "@/components/perfil/avatar-uploader";
 import { ProfileEditor, type ProfileData } from "@/components/perfil/profile-editor";
 import { TeamSection } from "@/components/perfil/team-section";
 import { getCurrentPhase, toPrices } from "@/lib/phases";
@@ -42,7 +43,7 @@ export default async function PerfilPage() {
   const supabase = await createClient();
   const { data: profileRow } = await supabase
     .from("profiles")
-    .select("display_name, city, birth_date, shirt_size")
+    .select("display_name, city, birth_date, shirt_size, phone, emergency_phone, avatar_url")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -54,6 +55,9 @@ export default async function PerfilPage() {
     city: profileRow?.city ?? "",
     birthDate: profileRow?.birth_date ?? "",
     shirtSize: profileRow?.shirt_size ?? "",
+    phone: profileRow?.phone ?? "",
+    emergencyPhone: profileRow?.emergency_phone ?? "",
+    avatarUrl: profileRow?.avatar_url ?? null,
   };
 
   // Los datos del atleta 2 viven en el equipo.
@@ -64,6 +68,9 @@ export default async function PerfilPage() {
         city: partnerRow.city,
         birthDate: partnerRow.birthDate ?? "",
         shirtSize: partnerRow.shirtSize,
+        phone: partnerRow.phone,
+        emergencyPhone: partnerRow.emergencyPhone,
+        avatarUrl: null,
       }
     : null;
 
@@ -185,28 +192,11 @@ export default async function PerfilPage() {
                   flexWrap: "wrap",
                 }}
               >
-                <div
-                  style={{
-                    position: "relative",
-                    width: 112,
-                    height: 112,
-                    borderRadius: 24,
-                    overflow: "hidden",
-                    border: "1px solid rgba(244,90,11,.4)",
-                    background: "linear-gradient(135deg,#f45a0b,#ff7a2e)",
-                    flexShrink: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span
-                    className="thf-wordmark"
-                    style={{ fontSize: 42, color: "#000", textTransform: "uppercase" }}
-                  >
-                    {profile.displayName.charAt(0)}
-                  </span>
-                </div>
+                <AvatarUploader
+                  userId={user.id}
+                  avatarUrl={profile.avatarUrl}
+                  initial={profile.displayName.charAt(0)}
+                />
 
                 <div style={{ flex: 1, minWidth: 200 }}>
                   <div

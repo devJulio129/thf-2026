@@ -138,18 +138,55 @@ export async function changeDivisionAction(
   return { error: null };
 }
 
-/** Datos personales del atleta que inicio sesion. */
+type EditedAthlete = {
+  name: string;
+  city: string;
+  birthDate: string;
+  shirtSize: string;
+  phone: string;
+  emergencyPhone: string;
+};
+
+/** Lee los campos de un atleta del formulario de datos personales. */
+function readEditedAthlete(
+  formData: FormData,
+  prefix: string,
+  who: string,
+): EditedAthlete | { error: string } {
+  const name = String(formData.get(`${prefix}-name`) ?? "").trim();
+  const city = String(formData.get(`${prefix}-city`) ?? "").trim();
+  const birthDate = String(formData.get(`${prefix}-birth`) ?? "").trim();
+  const shirtSize = String(formData.get(`${prefix}-shirt`) ?? "");
+  const phone = cleanPhone(String(formData.get(`${prefix}-phone`) ?? ""));
+  const emergencyPhone = cleanPhone(String(formData.get(`${prefix}-emergency`) ?? ""));
+
+  if (name.length < 2) return { error: `Escribe el nombre de ${who}.` };
+  if (shirtSize && !isShirtSize(shirtSize)) return { error: `Talla invalida de ${who}.` };
+  // Los telefonos son opcionales al editar, pero si vienen deben estar completos.
+  if (phone && phone.length !== 10) {
+    return { error: `El teléfono de ${who} debe tener 10 dígitos.` };
+  }
+  if (emergencyPhone && emergencyPhone.length !== 10) {
+    return { error: `El teléfono de emergencia de ${who} debe tener 10 dígitos.` };
+  }
+
+  return { name, city, birthDate, shirtSize, phone, emergencyPhone };
+}
+
+/**
+ * Datos personales de LOS DOS atletas, con un solo guardar.
+ *
+ * Los del atleta 1 viven en profiles; los dos tambien viven en team_members
+ * si ya hay equipo, y se actualizan juntos para que el perfil y el equipo no
+ * cuenten historias distintas. RLS solo deja tocar los integrantes del equipo
+ * propio (el capitan), asi que aqui no hace falta mas candado.
+ */
 export async function saveProfileAction(
   _prev: ProfileFormState,
   formData: FormData,
 ): Promise<ProfileFormState> {
-  const displayName = String(formData.get("displayName") ?? "").trim();
-  const city = String(formData.get("city") ?? "").trim();
-  const birthDate = String(formData.get("birthDate") ?? "").trim();
-  const shirtSize = String(formData.get("shirtSize") ?? "");
-
-  if (displayName.length < 2) return { error: "Escribe tu nombre." };
-  if (shirtSize && !isShirtSize(shirtSize)) return { error: "Talla invalida." };
+  const self = readEditedAthlete(formData, "athlete1", "atleta 1");
+  if ("error" in self) return { error: self.error };
 
   const supabase = await createClient();
   const {
@@ -160,14 +197,57 @@ export async function saveProfileAction(
   const { error } = await supabase
     .from("profiles")
     .update({
-      display_name: displayName,
-      city,
-      birth_date: birthDate || null,
-      shirt_size: shirtSize || null,
+      display_name: self.name,
+      city: self.city,
+      birth_date: self.birthDate || null,
+      shirt_size: self.shirtSize || null,
+      phone: self.phone,
+      emergency_phone: self.emergencyPhone,
     })
     .eq("id", user.id);
 
   if (error) return { error: `No se pudo guardar: ${error.message}` };
+
+  // Si hay equipo, los datos viven tambien en team_members: se sincronizan.
+  const { data: team } = await supabase
+    .from("teams")
+    .select("id")
+    .eq("captain_id", user.id)
+    .maybeSingle();
+
+  if (team) {
+    const { data: members } = await supabase
+      .from("team_members")
+      .select("id")
+      .eq("team_id", team.id)
+      .order("created_at");
+
+    const updates: { id: string; datos: EditedAthlete }[] = [];
+    if (members?.[0]) updates.push({ id: members[0].id, datos: self });
+
+    // El atleta 2 solo viene en el formulario cuando ya hay equipo.
+    if (members?.[1] && formData.has("athlete2-name")) {
+      const partner = readEditedAthlete(formData, "athlete2", "tu pareja");
+      if ("error" in partner) return { error: partner.error };
+      updates.push({ id: members[1].id, datos: partner });
+    }
+
+    for (const { id, datos } of updates) {
+      const { error: memberError } = await supabase
+        .from("team_members")
+        .update({
+          name: datos.name,
+          city: datos.city,
+          birth_date: datos.birthDate || null,
+          shirt_size: datos.shirtSize || "M",
+          phone: datos.phone,
+          emergency_phone: datos.emergencyPhone,
+        })
+        .eq("id", id);
+
+      if (memberError) return { error: `No se pudo guardar el equipo: ${memberError.message}` };
+    }
+  }
 
   revalidatePath("/perfil");
   return { error: null, saved: true };

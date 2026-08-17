@@ -402,6 +402,20 @@ a:hover {
   }
 }
 
+/* En telefono los datos personales iban en dos columnas de ~150px: etiquetas
+   con tracking ancho + valores apretados = texto amontonado. Una columna con
+   aire, y las tarjetas del perfil pierden el padding de escritorio. */
+@media (max-width: 560px) {
+  .thf-info-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .thf-card {
+    padding: 20px !important;
+  }
+}
+
 /* Los sliders y los selectores de color del editor de emblema son demasiado
    finos para el dedo (16 y 26px). Mas area tactil, mismo aspecto. */
 @media (max-width: 900px) {
