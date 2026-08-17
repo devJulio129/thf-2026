@@ -455,19 +455,6 @@ a:hover {
   }
 }
 
-/* Ciudad / nacimiento / playera del constructor de equipo: tres columnas no
-   caben en telefono y los campos quedaban de ~100px. Ciudad toma el renglon
-   completo y fecha + talla se reparten el de abajo. */
-@media (max-width: 560px) {
-  .thf-athlete-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
-
-  .thf-athlete-grid > *:first-child {
-    grid-column: 1 / -1;
-  }
-}
-
 /* Cabecera del leaderboard: a 390px el "Inscribirme" se salia 8px. Se aprieta
    el tracking de los enlaces laterales, nada mas. */
 @media (max-width: 560px) {

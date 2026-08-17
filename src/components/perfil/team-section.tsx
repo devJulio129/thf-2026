@@ -22,13 +22,12 @@ type Team = {
  */
 export function TeamSection({
   team,
-  defaultName,
-  defaultEmail,
+  athletes,
   prices,
 }: {
   team: Team | null;
-  defaultName: string;
-  defaultEmail: string;
+  /** Los dos atletas tal como estan en Datos personales; el alta los copia. */
+  athletes: { name: string; email: string }[];
   /** Precios de la fase activa; los pinta todo el flujo de alta y pago. */
   prices: { CM: number; OP: number };
 }) {
@@ -47,8 +46,7 @@ export function TeamSection({
         <TeamPanel team={team} prices={prices} />
       ) : creating ? (
         <TeamBuilder
-          defaultName={defaultName}
-          defaultEmail={defaultEmail}
+          athletes={athletes}
           prices={prices}
           onCancel={() => setCreating(false)}
         />

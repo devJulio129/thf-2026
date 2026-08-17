@@ -10,6 +10,8 @@ const INITIAL: ProfileFormState = { error: null };
 
 export type ProfileData = {
   displayName: string;
+  /** Solo el atleta 2 lo edita aqui; el del 1 es el de su cuenta. */
+  email?: string;
   city: string;
   birthDate: string;
   shirtSize: string;
@@ -87,10 +89,25 @@ function AthleteFields({ prefix, data }: { prefix: string; data: ProfileData }) 
           className="thf-input"
           defaultValue={data.displayName}
           placeholder="Nombre completo"
-          required
+          required={prefix === "athlete1"}
           minLength={2}
         />
       </div>
+      {data.email !== undefined ? (
+        <div>
+          <label style={labelStyle} htmlFor={`${prefix}-email`}>
+            Correo
+          </label>
+          <input
+            id={`${prefix}-email`}
+            name={`${prefix}-email`}
+            type="email"
+            className="thf-input"
+            defaultValue={data.email}
+            placeholder="correo@ejemplo.com"
+          />
+        </div>
+      ) : null}
       <div>
         <label style={labelStyle} htmlFor={`${prefix}-city`}>
           Ciudad
@@ -174,7 +191,8 @@ export function ProfileEditor({
   partner,
 }: {
   profile: ProfileData;
-  partner: ProfileData | null;
+  /** Siempre presente: sin equipo es el borrador que usa el alta del equipo. */
+  partner: ProfileData;
 }) {
   const [editing, setEditing] = useState(false);
   const [state, formAction, pending] = useActionState(saveProfileAction, INITIAL);
@@ -243,12 +261,13 @@ export function ProfileEditor({
             <AthleteFields prefix="athlete1" data={profile} />
           </div>
 
-          {partner ? (
-            <div>
-              <SectionTitle orange>Atleta 2 · tu pareja</SectionTitle>
-              <AthleteFields prefix="athlete2" data={partner} />
-            </div>
-          ) : null}
+          <div>
+            <SectionTitle orange>Atleta 2 · tu pareja</SectionTitle>
+            <AthleteFields prefix="athlete2" data={{ ...partner, email: partner.email ?? "" }} />
+            <p style={{ margin: "10px 0 0", fontSize: 11, color: "rgba(255,255,255,.45)", lineHeight: 1.6 }}>
+              Estos datos se usan al crear el equipo; puedes llenarlos desde ahora.
+            </p>
+          </div>
 
           {state.error ? (
             <p role="alert" style={{ fontSize: 13, color: "#f87171", margin: 0 }}>
@@ -289,15 +308,20 @@ export function ProfileEditor({
 
           <div style={{ marginTop: 24 }}>
             <SectionTitle orange>Atleta 2 · tu pareja</SectionTitle>
-            {partner ? (
+            {partner.displayName ? (
               <div className="thf-info-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 14 }}>
-                {rowsFor(partner).map((row) => (
+                {[
+                  { label: "Nombre", value: partner.displayName },
+                  { label: "Correo", value: partner.email ?? "" },
+                  ...rowsFor(partner).slice(1),
+                ].map((row) => (
                   <InfoBox key={row.label} label={row.label} value={row.value} />
                 ))}
               </div>
             ) : (
               <p style={{ fontSize: 13, color: "rgba(255,255,255,.45)", margin: 0, lineHeight: 1.6 }}>
-                Los datos de tu pareja se llenan al crear el equipo.
+                Aún no llenas los datos de tu pareja. Tócale a “Editar”: se usan al crear el
+                equipo.
               </p>
             )}
           </div>

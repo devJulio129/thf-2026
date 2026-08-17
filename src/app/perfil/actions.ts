@@ -5,13 +5,7 @@ import { revalidatePath } from "next/cache";
 import { safeEmblem } from "@/lib/emblem";
 import { createTeam, deleteMyTeam, type Athlete } from "@/lib/store";
 import { createClient } from "@/lib/supabase/server";
-import {
-  ATHLETES_PER_TEAM,
-  DIVISIONS,
-  isDivision,
-  isShirtSize,
-  isTeamGender,
-} from "@/lib/thf";
+import { DIVISIONS, isDivision, isShirtSize, isTeamGender } from "@/lib/thf";
 
 export type TeamFormState = { error: string | null };
 export type ProfileFormState = { error: string | null; saved?: boolean };
@@ -21,34 +15,11 @@ function cleanPhone(raw: string): string {
   return raw.replace(/\D/g, "");
 }
 
-function readAthlete(formData: FormData, index: number): Athlete {
-  const name = String(formData.get(`athlete-${index}-name`) ?? "").trim();
-  const email = String(formData.get(`athlete-${index}-email`) ?? "").trim().toLowerCase();
-  const shirtSize = String(formData.get(`athlete-${index}-shirt`) ?? "");
-  const city = String(formData.get(`athlete-${index}-city`) ?? "").trim();
-  const birthDate = String(formData.get(`athlete-${index}-birth`) ?? "").trim();
-  const phone = cleanPhone(String(formData.get(`athlete-${index}-phone`) ?? ""));
-  const emergencyPhone = cleanPhone(
-    String(formData.get(`athlete-${index}-emergency`) ?? ""),
-  );
-
-  if (name.length < 2) throw new Error(`Falta el nombre del atleta ${index + 1}.`);
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    throw new Error(`El correo del atleta ${index + 1} es invalido.`);
-  }
-  if (!isShirtSize(shirtSize)) throw new Error(`Falta la talla del atleta ${index + 1}.`);
-  if (phone.length !== 10) {
-    throw new Error(`El teléfono del atleta ${index + 1} debe tener 10 dígitos.`);
-  }
-  if (emergencyPhone.length !== 10) {
-    throw new Error(
-      `El teléfono de emergencia del atleta ${index + 1} debe tener 10 dígitos.`,
-    );
-  }
-
-  return { name, email, shirtSize, city, birthDate: birthDate || null, phone, emergencyPhone };
-}
-
+/**
+ * Crea el equipo. El formulario solo trae emblema, division, categoria y
+ * nombre: los datos de los DOS atletas salen de "Datos personales" (profiles),
+ * que es su unica fuente. Si falta algo, el error dice exactamente que.
+ */
 export async function createTeamAction(
   _prev: TeamFormState,
   formData: FormData,
@@ -63,9 +34,65 @@ export async function createTeamAction(
     const gender = String(formData.get("gender") ?? "");
     if (!isTeamGender(gender)) return { error: "Elige la categoria del equipo." };
 
-    const athletes = Array.from({ length: ATHLETES_PER_TEAM }, (_, index) =>
-      readAthlete(formData, index),
-    );
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { error: "Hay que iniciar sesion." };
+
+    const { data: row } = await supabase
+      .from("profiles")
+      .select(
+        `display_name, city, birth_date, shirt_size, phone, emergency_phone,
+         partner_name, partner_email, partner_city, partner_birth_date,
+         partner_shirt_size, partner_phone, partner_emergency_phone`,
+      )
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (!row) return { error: "No se pudo leer tu perfil." };
+
+    const faltantes: string[] = [];
+    if ((row.display_name ?? "").trim().length < 2) faltantes.push("tu nombre");
+    if ((row.phone ?? "").length !== 10) faltantes.push("tu teléfono");
+    if ((row.emergency_phone ?? "").length !== 10) faltantes.push("tu tel. de emergencia");
+    if (!isShirtSize(row.shirt_size ?? "")) faltantes.push("tu talla");
+    if ((row.partner_name ?? "").trim().length < 2) faltantes.push("el nombre de tu pareja");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.partner_email ?? "")) {
+      faltantes.push("el correo de tu pareja");
+    }
+    if ((row.partner_phone ?? "").length !== 10) faltantes.push("el teléfono de tu pareja");
+    if ((row.partner_emergency_phone ?? "").length !== 10) {
+      faltantes.push("el tel. de emergencia de tu pareja");
+    }
+    if (!isShirtSize(row.partner_shirt_size ?? "")) faltantes.push("la talla de tu pareja");
+
+    if (faltantes.length) {
+      return {
+        error: `Antes de crear el equipo completa en Datos personales: ${faltantes.join(", ")}.`,
+      };
+    }
+
+    const athletes: Athlete[] = [
+      {
+        name: row.display_name.trim(),
+        email: (user.email ?? "").toLowerCase(),
+        shirtSize: row.shirt_size as Athlete["shirtSize"],
+        city: row.city ?? "",
+        birthDate: row.birth_date || null,
+        phone: row.phone,
+        emergencyPhone: row.emergency_phone,
+      },
+      {
+        name: row.partner_name.trim(),
+        email: row.partner_email.toLowerCase(),
+        shirtSize: row.partner_shirt_size as Athlete["shirtSize"],
+        city: row.partner_city ?? "",
+        birthDate: row.partner_birth_date || null,
+        phone: row.partner_phone,
+        emergencyPhone: row.partner_emergency_phone,
+      },
+    ];
 
     let emblem;
     try {
@@ -194,6 +221,27 @@ export async function saveProfileAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Hay que iniciar sesion." };
 
+  // La pareja se guarda SIEMPRE en el perfil, haya equipo o no: es el borrador
+  // del que se copia el alta del equipo. El nombre puede venir vacio mientras
+  // el capitan consigue los datos.
+  const partnerName = String(formData.get("athlete2-name") ?? "").trim();
+  const partnerEmail = String(formData.get("athlete2-email") ?? "").trim().toLowerCase();
+  const partnerCity = String(formData.get("athlete2-city") ?? "").trim();
+  const partnerBirth = String(formData.get("athlete2-birth") ?? "").trim();
+  const partnerShirt = String(formData.get("athlete2-shirt") ?? "");
+  const partnerPhone = cleanPhone(String(formData.get("athlete2-phone") ?? ""));
+  const partnerEmergency = cleanPhone(String(formData.get("athlete2-emergency") ?? ""));
+
+  if (partnerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(partnerEmail)) {
+    return { error: "El correo de tu pareja es invalido." };
+  }
+  if (partnerPhone && partnerPhone.length !== 10) {
+    return { error: "El teléfono de tu pareja debe tener 10 dígitos." };
+  }
+  if (partnerEmergency && partnerEmergency.length !== 10) {
+    return { error: "El teléfono de emergencia de tu pareja debe tener 10 dígitos." };
+  }
+
   const { error } = await supabase
     .from("profiles")
     .update({
@@ -203,12 +251,20 @@ export async function saveProfileAction(
       shirt_size: self.shirtSize || null,
       phone: self.phone,
       emergency_phone: self.emergencyPhone,
+      partner_name: partnerName,
+      partner_email: partnerEmail,
+      partner_city: partnerCity,
+      partner_birth_date: partnerBirth || null,
+      partner_shirt_size: partnerShirt || null,
+      partner_phone: partnerPhone,
+      partner_emergency_phone: partnerEmergency,
     })
     .eq("id", user.id);
 
   if (error) return { error: `No se pudo guardar: ${error.message}` };
 
-  // Si hay equipo, los datos viven tambien en team_members: se sincronizan.
+  // Si hay equipo, los datos viven tambien en team_members: se sincronizan
+  // para que el perfil y el equipo no cuenten historias distintas.
   const { data: team } = await supabase
     .from("teams")
     .select("id")
@@ -222,17 +278,24 @@ export async function saveProfileAction(
       .eq("team_id", team.id)
       .order("created_at");
 
-    const updates: { id: string; datos: EditedAthlete }[] = [];
+    const updates: { id: string; datos: EditedAthlete; email?: string }[] = [];
     if (members?.[0]) updates.push({ id: members[0].id, datos: self });
-
-    // El atleta 2 solo viene en el formulario cuando ya hay equipo.
-    if (members?.[1] && formData.has("athlete2-name")) {
-      const partner = readEditedAthlete(formData, "athlete2", "tu pareja");
-      if ("error" in partner) return { error: partner.error };
-      updates.push({ id: members[1].id, datos: partner });
+    if (members?.[1] && partnerName) {
+      updates.push({
+        id: members[1].id,
+        datos: {
+          name: partnerName,
+          city: partnerCity,
+          birthDate: partnerBirth,
+          shirtSize: partnerShirt,
+          phone: partnerPhone,
+          emergencyPhone: partnerEmergency,
+        },
+        email: partnerEmail || undefined,
+      });
     }
 
-    for (const { id, datos } of updates) {
+    for (const { id, datos, email } of updates) {
       const { error: memberError } = await supabase
         .from("team_members")
         .update({
@@ -242,6 +305,7 @@ export async function saveProfileAction(
           shirt_size: datos.shirtSize || "M",
           phone: datos.phone,
           emergency_phone: datos.emergencyPhone,
+          ...(email ? { email } : {}),
         })
         .eq("id", id);
 

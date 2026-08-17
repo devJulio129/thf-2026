@@ -10,12 +10,21 @@ Next.js 16 (App Router) + TypeScript + Tailwind + Supabase.
 ## El flujo, tal como en el prototipo
 
 ```
-Landing  →  Login  →  Perfil  →  crear equipo (2 atletas + emblema)
+Landing  →  Login  →  Perfil  →  Datos personales (los 2 atletas, con
+                     telefonos y contacto de emergencia)
+                                      ↓
+                     crear equipo (emblema + division + categoria;
+                     los atletas se copian del perfil)
                                       ↓
                                  pagar inscripción      ← el cobro vive AQUI
                                       ↓
                               credencial QR liberada
 ```
+
+Los datos personales se capturan UNA vez, en el perfil: la pareja se guarda
+como borrador en el perfil del capitán (`profiles.partner_*`) y el alta del
+equipo los copia a `team_members`. Si falta algo, crear equipo lo dice campo
+por campo.
 
 El cobro no es una página aparte: es el último paso del armado de equipo, dentro
 del perfil. Igual que en `Tampico Hybrid Fest - Profile.dc.html`.

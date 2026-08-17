@@ -7,11 +7,9 @@ import { EmblemEditor } from "@/components/perfil/emblem-editor";
 import { createTeamAction, type TeamFormState } from "@/app/perfil/actions";
 import { DEFAULT_EMBLEM, type EmblemSpec } from "@/lib/emblem";
 import {
-  ATHLETES_PER_TEAM,
   DIVISION_IDS,
   DIVISIONS,
   GENDERS,
-  SHIRT_SIZES,
   formatMXN,
   type Division,
   type TeamGender,
@@ -59,13 +57,12 @@ const ghostButton: CSSProperties = {
  * emblema por capas, los dos atletas y la categoria de la pareja.
  */
 export function TeamBuilder({
-  defaultName,
-  defaultEmail,
+  athletes,
   prices,
   onCancel,
 }: {
-  defaultName: string;
-  defaultEmail: string;
+  /** Resumen de los dos atletas, tal como estan en Datos personales. */
+  athletes: { name: string; email: string }[];
   /** Precios de la fase activa: lo que se pinta es lo que se va a cobrar. */
   prices: { CM: number; OP: number };
   onCancel: () => void;
@@ -141,99 +138,56 @@ export function TeamBuilder({
 
       <div>
         <label style={labelStyle}>Atletas (2 por equipo)</label>
-        <div style={{ display: "grid", gap: 16 }}>
-          {Array.from({ length: ATHLETES_PER_TEAM }, (_, index) => (
+        {/* Los datos personales viven en "Datos personales": aqui solo se
+            confirma con quien se registra el equipo. */}
+        <div style={{ display: "grid", gap: 8 }}>
+          {athletes.map((athlete, index) => (
             <div
               key={index}
               style={{
-                borderRadius: 16,
+                borderRadius: 14,
                 border: "1px solid rgba(255,255,255,.1)",
                 background: "rgba(0,0,0,.25)",
-                padding: 16,
-                display: "grid",
-                gap: 8,
+                padding: "12px 16px",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
               }}
             >
-              <div
+              <span
                 style={{
                   fontSize: 10,
                   fontWeight: 800,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
+                  letterSpacing: "0.16em",
                   color: index === 0 ? "#f45a0b" : "rgba(255,255,255,.45)",
                 }}
               >
-                {index === 0 ? "Atleta 1 · líder" : "Atleta 2 · tu pareja"}
-              </div>
-              <input
-                name={`athlete-${index}-name`}
-                className="thf-input"
-                defaultValue={index === 0 ? defaultName : ""}
-                placeholder={index === 0 ? "Atleta 1 (líder)" : "Atleta 2"}
-                required
-                minLength={2}
-              />
-              <input
-                name={`athlete-${index}-email`}
-                type="email"
-                className="thf-input"
-                defaultValue={index === 0 ? defaultEmail : ""}
-                placeholder="correo@ejemplo.com"
-                required
-              />
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 8 }}>
-                <input
-                  name={`athlete-${index}-phone`}
-                  type="tel"
-                  inputMode="tel"
-                  className="thf-input"
-                  placeholder="Teléfono · 10 dígitos"
-                  aria-label={`Telefono del atleta ${index + 1}`}
-                  required
-                  minLength={10}
-                />
-                <input
-                  name={`athlete-${index}-emergency`}
-                  type="tel"
-                  inputMode="tel"
-                  className="thf-input"
-                  placeholder="Emergencia · 10 dígitos"
-                  aria-label={`Telefono de emergencia del atleta ${index + 1}`}
-                  required
-                  minLength={10}
-                />
-              </div>
-              <div
-                className="thf-athlete-grid"
-                style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: 8 }}
-              >
-                <input
-                  name={`athlete-${index}-city`}
-                  className="thf-input"
-                  placeholder="Ciudad"
-                />
-                <input
-                  name={`athlete-${index}-birth`}
-                  type="date"
-                  className="thf-input"
-                  aria-label={`Fecha de nacimiento del atleta ${index + 1}`}
-                />
-                <select
-                  name={`athlete-${index}-shirt`}
-                  className="thf-input"
-                  defaultValue="M"
-                  aria-label={`Talla del atleta ${index + 1}`}
+                {index + 1}
+              </span>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 14, color: "rgba(255,255,255,.9)" }}>
+                  {athlete.name || "Sin nombre"}
+                </div>
+                <div
+                  style={{
+                    fontSize: 11,
+                    color: "rgba(255,255,255,.45)",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
                 >
-                  {SHIRT_SIZES.map((size) => (
-                    <option key={size} value={size}>
-                      Playera {size}
-                    </option>
-                  ))}
-                </select>
+                  {athlete.email || "sin correo"}
+                </div>
               </div>
             </div>
           ))}
         </div>
+        <p style={{ margin: "10px 0 0", fontSize: 11, color: "rgba(255,255,255,.45)", lineHeight: 1.6 }}>
+          Los datos de los dos atletas (teléfonos, tallas, emergencia) se toman de{" "}
+          <strong style={{ color: "rgba(255,255,255,.7)" }}>Datos personales</strong>. Si algo
+          falta o está mal, edítalo ahí antes de crear el equipo.
+        </p>
       </div>
 
       <div>

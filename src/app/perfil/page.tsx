@@ -43,7 +43,11 @@ export default async function PerfilPage() {
   const supabase = await createClient();
   const { data: profileRow } = await supabase
     .from("profiles")
-    .select("display_name, city, birth_date, shirt_size, phone, emergency_phone, avatar_url")
+    .select(
+      `display_name, city, birth_date, shirt_size, phone, emergency_phone, avatar_url,
+       partner_name, partner_email, partner_city, partner_birth_date, partner_shirt_size,
+       partner_phone, partner_emergency_phone`,
+    )
     .eq("id", user.id)
     .maybeSingle();
 
@@ -60,11 +64,13 @@ export default async function PerfilPage() {
     avatarUrl: profileRow?.avatar_url ?? null,
   };
 
-  // Los datos del atleta 2 viven en el equipo.
+  // Los datos del atleta 2: del equipo si ya existe; si no, del borrador que
+  // vive en el perfil del capitan (es lo que copia el alta del equipo).
   const partnerRow = team?.athletes[1] ?? null;
-  const partner: ProfileData | null = partnerRow
+  const partner: ProfileData = partnerRow
     ? {
         displayName: partnerRow.name,
+        email: partnerRow.email,
         city: partnerRow.city,
         birthDate: partnerRow.birthDate ?? "",
         shirtSize: partnerRow.shirtSize,
@@ -72,7 +78,16 @@ export default async function PerfilPage() {
         emergencyPhone: partnerRow.emergencyPhone,
         avatarUrl: null,
       }
-    : null;
+    : {
+        displayName: profileRow?.partner_name ?? "",
+        email: profileRow?.partner_email ?? "",
+        city: profileRow?.partner_city ?? "",
+        birthDate: profileRow?.partner_birth_date ?? "",
+        shirtSize: profileRow?.partner_shirt_size ?? "",
+        phone: profileRow?.partner_phone ?? "",
+        emergencyPhone: profileRow?.partner_emergency_phone ?? "",
+        avatarUrl: null,
+      };
 
   const division = team ? DIVISIONS[team.division] : null;
   const divisionLabel = division ? `Categoría ${division.name}` : "Sin categoría";
@@ -252,8 +267,10 @@ export default async function PerfilPage() {
                     }
                   : null
               }
-              defaultName={profile.displayName}
-              defaultEmail={user.email ?? ""}
+              athletes={[
+                { name: profile.displayName, email: user.email ?? "" },
+                { name: partner.displayName, email: partner.email ?? "" },
+              ]}
               prices={toPrices(phase)}
             />
           </div>
