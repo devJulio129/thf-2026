@@ -42,7 +42,10 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
 
   if (displayName.length < 2) return { error: "Escribe tu nombre." };
   if (!email) return { error: "Falta el correo." };
-  if (password.length < 6) return { error: "La contrasena necesita al menos 6 caracteres." };
+  // 8 como minimo, alineado con la politica del proyecto de Supabase. Las
+  // cuentas que se registraron con menos siguen entrando: esto solo aplica a
+  // contrasenas nuevas.
+  if (password.length < 8) return { error: "La contrasena necesita al menos 8 caracteres." };
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({

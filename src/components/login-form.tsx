@@ -148,7 +148,8 @@ export function LoginForm({ next }: { next: string }) {
               name="password"
               placeholder="Contraseña"
               required
-              minLength={6}
+              // Solo al crear cuenta: quien ya tiene una de 6 debe poder entrar.
+              minLength={isSignUp ? 8 : 6}
               autoComplete={isSignUp ? "new-password" : "current-password"}
               style={{ ...inputBase, padding: "14px 44px 14px 44px" }}
             />

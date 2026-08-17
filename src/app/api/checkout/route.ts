@@ -8,6 +8,22 @@ import { CURRENCY, DIVISIONS } from "@/lib/thf";
 export const runtime = "nodejs";
 
 /**
+ * Anti-CSRF: este endpoint actua con la cookie de sesion, asi que un sitio
+ * ajeno podria disparar el POST desde el navegador de un atleta logueado. El
+ * navegador siempre manda Origin en un POST cross-site; si viene y no somos
+ * nosotros, fuera. (Sin Origin no es un navegador: no hay CSRF que montar.)
+ */
+function isSameOrigin(request: Request): boolean {
+  const origin = request.headers.get("origin");
+  if (!origin) return true;
+  try {
+    return new URL(origin).host === request.headers.get("host");
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Crea la preference de pago del equipo del atleta logueado y devuelve la URL
  * de Checkout Pro.
  *
@@ -15,7 +31,10 @@ export const runtime = "nodejs";
  * desde la base. No hay forma de pedir un cobro por otro importe ni de pagar el
  * equipo de alguien mas.
  */
-export async function POST() {
+export async function POST(request: Request) {
+  if (!isSameOrigin(request)) {
+    return NextResponse.json({ error: "Origen no permitido." }, { status: 403 });
+  }
   const team = await getMyTeam();
 
   if (!team) {
